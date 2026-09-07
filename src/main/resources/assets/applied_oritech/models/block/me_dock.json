@@ -1,6 +1,12 @@
 {
-  "parent": "minecraft:block/cube_all",
+  "parent": "minecraft:block/cube",
   "textures": {
-    "all": "minecraft:block/iron_block"
+    "particle": "applied_oritech:me_dock",
+    "down": "applied_oritech:me_dock",
+    "up": "applied_oritech:me_dock",
+    "north": "applied_oritech:me_dock",
+    "south": "applied_oritech:me_dock",
+    "west": "applied_oritech:me_dock",
+    "east": "applied_oritech:me_dock"
   }
 }

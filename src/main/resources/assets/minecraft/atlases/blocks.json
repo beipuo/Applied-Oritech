@@ -1,0 +1,14 @@
+{
+  "sources": [
+    {
+      "type": "minecraft:single",
+      "resource": "applied_oritech:me_dock",
+      "sprite": "applied_oritech:me_dock"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "applied_oritech:me_dock_off",
+      "sprite": "applied_oritech:me_dock_off"
+    }
+  ]
+}

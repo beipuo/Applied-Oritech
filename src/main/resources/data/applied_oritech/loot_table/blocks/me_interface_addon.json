@@ -7,7 +7,7 @@
       "entries": [
         {
           "type": "minecraft:item",
-          "name": "applied_oritech:me_interface_upgrade"
+          "name": "applied_oritech:me_interface_addon"
         }
       ],
       "conditions": [

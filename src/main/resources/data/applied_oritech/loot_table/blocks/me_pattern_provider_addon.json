@@ -7,7 +7,7 @@
       "entries": [
         {
           "type": "minecraft:item",
-          "name": "applied_oritech:me_pattern_provider_upgrade"
+          "name": "applied_oritech:me_pattern_provider_addon"
         }
       ],
       "conditions": [

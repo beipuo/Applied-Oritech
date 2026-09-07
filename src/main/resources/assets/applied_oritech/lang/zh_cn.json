@@ -1,8 +1,8 @@
 {
   "itemGroup.applied_oritech": "应用奥瑞科技",
   "block.applied_oritech.me_dock": "ME 扩展坞",
-  "block.applied_oritech.me_pattern_provider_upgrade": "ME 样板供应器插件",
-  "block.applied_oritech.me_interface_upgrade": "ME 接口插件",
+  "block.applied_oritech.me_pattern_provider_addon": "ME 样板供应器插件",
+  "block.applied_oritech.me_interface_addon": "ME 接口插件",
   "message.applied_oritech.not_attached": "尚未连接机器。插件需紧贴已连接机器的 ME 扩展坞；扩展坞需安装在机器附加装置位置。",
   "message.applied_oritech.no_dock": "这台机器没有 ME 扩展坞。",
   "message.applied_oritech.dock_online": "ME 扩展坞已上线，已连接 %s 个插件模块。",
@@ -11,6 +11,6 @@
   "message.applied_oritech.toggle_on": "开启",
   "message.applied_oritech.toggle_off": "关闭",
   "tooltip.applied_oritech.me_dock": "将机器的 ME 插件接入网络，每个扩展坞及其所属插件共用一个频道。",
-  "tooltip.applied_oritech.me_pattern_provider_upgrade": "使用机器执行 ME 自动合成，仅向输入槽投料。潜行空手右键切换产物自动回收。",
-  "tooltip.applied_oritech.me_interface_upgrade": "将接口中配置的物品补充到机器输入槽，安装合成卡后可请求合成缺少的物品。"
+  "tooltip.applied_oritech.me_pattern_provider_addon": "使用机器执行 ME 自动合成，仅向输入槽投料。潜行空手右键切换产物自动回收。",
+  "tooltip.applied_oritech.me_interface_addon": "将接口中配置的物品补充到机器输入槽，安装合成卡后可请求合成缺少的物品。"
 }

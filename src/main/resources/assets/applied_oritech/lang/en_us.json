@@ -2,18 +2,18 @@
   "itemGroup.applied_oritech": "Applied Oritech",
 
   "block.applied_oritech.me_dock": "ME Dock",
-  "block.applied_oritech.me_pattern_provider_upgrade": "ME Pattern Provider Upgrade",
-  "block.applied_oritech.me_interface_upgrade": "ME Interface Upgrade",
+  "block.applied_oritech.me_pattern_provider_addon": "ME Pattern Provider Addon",
+  "block.applied_oritech.me_interface_addon": "ME Interface Addon",
 
-  "message.applied_oritech.not_attached": "Not attached: place upgrades against an ME Dock connected to a machine; install the dock in a machine addon slot.",
+  "message.applied_oritech.not_attached": "Not attached: place addons against an ME Dock connected to a machine; install the dock in a machine addon slot.",
   "message.applied_oritech.no_dock": "No ME Dock on this machine.",
-  "message.applied_oritech.dock_online": "ME Dock online: %s upgrade modules connected.",
+  "message.applied_oritech.dock_online": "ME Dock online: %s addon modules connected.",
   "message.applied_oritech.dock_offline": "ME Dock offline: check network power and channels.",
   "message.applied_oritech.auto_return": "Return results to network: %s",
   "message.applied_oritech.toggle_on": "on",
   "message.applied_oritech.toggle_off": "off",
 
-  "tooltip.applied_oritech.me_dock": "Connects this machine's ME upgrade modules to an ME network. Each dock and its upgrades share one channel.",
-  "tooltip.applied_oritech.me_pattern_provider_upgrade": "Lets the ME network craft using this machine. Pushes ingredients into the machine's input slots only.",
-  "tooltip.applied_oritech.me_interface_upgrade": "Keeps the machine's input slots stocked with the items you configure, requesting crafts when they run out."
+  "tooltip.applied_oritech.me_dock": "Connects this machine's ME addon modules to an ME network. Each dock and its addons share one channel.",
+  "tooltip.applied_oritech.me_pattern_provider_addon": "Lets the ME network craft using this machine. Pushes ingredients into the machine's input slots only.",
+  "tooltip.applied_oritech.me_interface_addon": "Keeps the machine's input slots stocked with the items you configure, requesting crafts when they run out."
 }

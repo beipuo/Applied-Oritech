@@ -1,0 +1,12 @@
+{
+  "parent": "minecraft:block/cube",
+  "textures": {
+    "particle": "applied_oritech:me_dock_off",
+    "down": "applied_oritech:me_dock_off",
+    "up": "applied_oritech:me_dock_off",
+    "north": "applied_oritech:me_dock_off",
+    "south": "applied_oritech:me_dock_off",
+    "west": "applied_oritech:me_dock_off",
+    "east": "applied_oritech:me_dock_off"
+  }
+}
