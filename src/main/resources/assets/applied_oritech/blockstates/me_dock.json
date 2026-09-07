@@ -1,0 +1,6 @@
+{
+  "variants": {
+    "addon_used=false": { "model": "applied_oritech:block/me_dock" },
+    "addon_used=true": { "model": "applied_oritech:block/me_dock" }
+  }
+}

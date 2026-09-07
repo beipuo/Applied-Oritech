@@ -72,6 +72,23 @@ versionRange = "${minecraft_version_range}"
 ordering = "NONE"
 side = "BOTH"
 
+# The two mods this addon bridges. Both are hard requirements — without either one
+# there is nothing for this mod to do, and every one of our block entities touches
+# classes from both.
+[[dependencies."${mod_id}"]]
+modId = "oritech"
+type = "required"
+versionRange = "[1.2.12,)"
+ordering = "AFTER"
+side = "BOTH"
+
+[[dependencies."${mod_id}"]]
+modId = "ae2"
+type = "required"
+versionRange = "[19.2.0,)"
+ordering = "AFTER"
+side = "BOTH"
+
 # Features are specific properties of the game environment, that you may want to declare you require. This example declares
 # that your mod requires GL version 3.2 or higher. Other features will be added. They are side aware so declaring this won't
 # stop your mod loading on the server for example.

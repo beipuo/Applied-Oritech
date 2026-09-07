@@ -1,0 +1,8 @@
+{
+  "replace": false,
+  "values": [
+    "applied_oritech:me_dock",
+    "applied_oritech:me_interface_upgrade",
+    "applied_oritech:me_pattern_provider_upgrade"
+  ]
+}
