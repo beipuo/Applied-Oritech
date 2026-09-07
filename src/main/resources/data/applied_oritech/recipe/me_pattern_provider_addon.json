@@ -1,0 +1,12 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "pattern": ["AAA", "ABA", "CDC"],
+  "key": {
+    "A": { "tag": "c:plates/plastic" },
+    "B": { "item": "ae2:pattern_provider" },
+    "C": { "item": "ae2:logic_processor" },
+    "D": { "tag": "oritech:plating" }
+  },
+  "result": { "id": "applied_oritech:me_pattern_provider_addon", "count": 1 }
+}

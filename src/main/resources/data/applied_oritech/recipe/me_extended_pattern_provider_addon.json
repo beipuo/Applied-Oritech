@@ -1,0 +1,15 @@
+{
+  "neoforge:conditions": [
+    { "type": "neoforge:mod_loaded", "modid": "extendedae" }
+  ],
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "pattern": ["AAA", "ABA", "CDC"],
+  "key": {
+    "A": { "tag": "c:plates/plastic" },
+    "B": { "item": "extendedae:ex_pattern_provider" },
+    "C": { "item": "ae2:logic_processor" },
+    "D": { "tag": "oritech:plating" }
+  },
+  "result": { "id": "applied_oritech:me_extended_pattern_provider_addon", "count": 1 }
+}
