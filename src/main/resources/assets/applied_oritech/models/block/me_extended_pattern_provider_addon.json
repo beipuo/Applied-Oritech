@@ -1,0 +1,7 @@
+{
+  "parent": "applied_oritech:block/me_pattern_provider_addon",
+  "textures": {
+    "front": "extendedae:part/ex_pattern_provider",
+    "particle": "ae2:part/pattern_provider_sides"
+  }
+}

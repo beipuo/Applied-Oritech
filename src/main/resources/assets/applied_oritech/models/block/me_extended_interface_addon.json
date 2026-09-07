@@ -1,0 +1,6 @@
+{
+  "parent": "applied_oritech:block/me_interface_addon",
+  "textures": {
+    "front": "extendedae:part/ex_interface"
+  }
+}

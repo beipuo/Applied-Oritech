@@ -4,6 +4,10 @@
   "block.applied_oritech.me_dock": "ME Dock",
   "block.applied_oritech.me_pattern_provider_addon": "ME Pattern Provider Addon",
   "block.applied_oritech.me_interface_addon": "ME Interface Addon",
+  "block.applied_oritech.me_extended_pattern_provider_addon": "ME Extended Pattern Provider Addon",
+  "block.applied_oritech.me_extended_interface_addon": "ME Extended Interface Addon",
+  "tooltip.applied_oritech.me_extended_pattern_provider_addon": "Provides 36 pattern slots. Sneak-right-click with an empty hand to toggle automatic output return.",
+  "tooltip.applied_oritech.me_extended_interface_addon": "Provides 36 stock slots using ExtendedAE's paged interface menu. ",
 
   "message.applied_oritech.not_attached": "Not attached: place addons against an ME Dock connected to a machine; install the dock in a machine addon slot.",
   "message.applied_oritech.no_dock": "No ME Dock on this machine.",

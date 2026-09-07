@@ -14,6 +14,7 @@ import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.material.MapColor;
 import net.neoforged.bus.api.IEventBus;
+import net.neoforged.fml.ModList;
 import net.neoforged.neoforge.registries.DeferredBlock;
 import net.neoforged.neoforge.registries.DeferredHolder;
 import net.neoforged.neoforge.registries.DeferredItem;
@@ -25,6 +26,7 @@ import com.java.beipuo.applied_oritech.block.MEPatternProviderUpgradeBlock;
 import com.java.beipuo.applied_oritech.blockentity.MEDockBlockEntity;
 import com.java.beipuo.applied_oritech.blockentity.MEInterfaceUpgradeBlockEntity;
 import com.java.beipuo.applied_oritech.blockentity.MEPatternProviderUpgradeBlockEntity;
+import com.java.beipuo.applied_oritech.compat.extendedae.ExtendedAEContent;
 
 /** Every block, item, block entity type and creative tab this mod registers. */
 public final class AOContent {
@@ -80,6 +82,9 @@ public final class AOContent {
                         output.accept(ME_DOCK.get());
                         output.accept(ME_PATTERN_PROVIDER_UPGRADE.get());
                         output.accept(ME_INTERFACE_UPGRADE.get());
+                        if (ModList.get().isLoaded("extendedae")) {
+                            ExtendedAEContent.addCreativeItems(output);
+                        }
                     })
                     .build());
 
@@ -87,6 +92,9 @@ public final class AOContent {
     }
 
     public static void register(IEventBus modEventBus) {
+        if (ModList.get().isLoaded("extendedae")) {
+            ExtendedAEContent.register(modEventBus);
+        }
         for (var name : new String[] { "me_interface", "me_pattern_provider" }) {
             var oldId = ResourceLocation.fromNamespaceAndPath(Applied_oritech.MODID, name + "_upgrade");
             var newId = ResourceLocation.fromNamespaceAndPath(Applied_oritech.MODID, name + "_addon");
@@ -100,7 +108,7 @@ public final class AOContent {
         CREATIVE_TABS.register(modEventBus);
     }
 
-    private static BlockBehaviour.Properties machineAddonProperties() {
+    public static BlockBehaviour.Properties machineAddonProperties() {
         return BlockBehaviour.Properties.of()
                 .mapColor(MapColor.COLOR_GRAY)
                 .strength(2.0F)
@@ -108,7 +116,7 @@ public final class AOContent {
                 .sound(SoundType.METAL);
     }
 
-    private static <T extends BlockEntity> DeferredHolder<BlockEntityType<?>, BlockEntityType<T>> blockEntity(
+    public static <T extends BlockEntity> DeferredHolder<BlockEntityType<?>, BlockEntityType<T>> blockEntity(
             String name, BlockEntityType.BlockEntitySupplier<T> factory, Supplier<? extends Block> block) {
         return BLOCK_ENTITIES.register(name,
                 () -> BlockEntityType.Builder.of(factory, block.get()).build(null));

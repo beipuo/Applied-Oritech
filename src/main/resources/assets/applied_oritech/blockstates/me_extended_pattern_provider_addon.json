@@ -1,0 +1,10 @@
+{
+  "variants": {
+    "facing=up": { "model": "applied_oritech:block/me_extended_pattern_provider_addon" },
+    "facing=down": { "model": "applied_oritech:block/me_extended_pattern_provider_addon", "x": 180 },
+    "facing=north": { "model": "applied_oritech:block/me_extended_pattern_provider_addon", "x": 90 },
+    "facing=east": { "model": "applied_oritech:block/me_extended_pattern_provider_addon", "x": 90, "y": 90 },
+    "facing=south": { "model": "applied_oritech:block/me_extended_pattern_provider_addon", "x": 90, "y": 180 },
+    "facing=west": { "model": "applied_oritech:block/me_extended_pattern_provider_addon", "x": 90, "y": 270 }
+  }
+}

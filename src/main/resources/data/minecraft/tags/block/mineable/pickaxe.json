@@ -3,6 +3,8 @@
   "values": [
     "applied_oritech:me_dock",
     "applied_oritech:me_interface_addon",
-    "applied_oritech:me_pattern_provider_addon"
+    "applied_oritech:me_pattern_provider_addon",
+    { "id": "applied_oritech:me_extended_interface_addon", "required": false },
+    { "id": "applied_oritech:me_extended_pattern_provider_addon", "required": false }
   ]
 }

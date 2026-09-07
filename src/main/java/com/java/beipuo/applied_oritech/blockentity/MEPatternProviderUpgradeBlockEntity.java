@@ -9,6 +9,7 @@ import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 
 import appeng.api.config.Actionable;
@@ -50,8 +51,12 @@ public class MEPatternProviderUpgradeBlockEntity extends MEUpgradeBlockEntity
     private boolean patternsInitialised;
 
     public MEPatternProviderUpgradeBlockEntity(BlockPos pos, BlockState state) {
-        super(AOContent.ME_PATTERN_PROVIDER_UPGRADE_ENTITY.get(), pos, state);
-        this.logic = new PatternProviderLogic(getMainNode(), this);
+        this(AOContent.ME_PATTERN_PROVIDER_UPGRADE_ENTITY.get(), pos, state, 9);
+    }
+
+    protected MEPatternProviderUpgradeBlockEntity(BlockEntityType<?> type, BlockPos pos, BlockState state, int slots) {
+        super(type, pos, state);
+        this.logic = new PatternProviderLogic(getMainNode(), this, slots);
         // Must follow the logic construction — see MEUpgradeBlockEntity#applyGroupFlags.
         applyGroupFlags();
         getMainNode().setIdlePowerUsage(AOConfig.upgradeIdlePower());
@@ -91,12 +96,12 @@ public class MEPatternProviderUpgradeBlockEntity extends MEUpgradeBlockEntity
 
     @Override
     public AEItemKey getTerminalIcon() {
-        return AEItemKey.of(AOContent.ME_PATTERN_PROVIDER_UPGRADE.get());
+        return AEItemKey.of(getBlockState().getBlock());
     }
 
     @Override
     public ItemStack getMainMenuIcon() {
-        return new ItemStack(AOContent.ME_PATTERN_PROVIDER_UPGRADE.get());
+        return new ItemStack(getBlockState().getBlock());
     }
 
     @Override

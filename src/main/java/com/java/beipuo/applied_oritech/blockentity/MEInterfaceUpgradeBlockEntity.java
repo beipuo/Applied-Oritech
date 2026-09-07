@@ -12,6 +12,7 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 
 import appeng.api.config.Actionable;
@@ -50,8 +51,12 @@ public class MEInterfaceUpgradeBlockEntity extends MEUpgradeBlockEntity
     private final IActionSource actionSource = IActionSource.ofMachine(this);
 
     public MEInterfaceUpgradeBlockEntity(BlockPos pos, BlockState state) {
-        super(AOContent.ME_INTERFACE_UPGRADE_ENTITY.get(), pos, state);
-        this.logic = new InterfaceLogic(getMainNode(), this, AOContent.ME_INTERFACE_UPGRADE.get());
+        this(AOContent.ME_INTERFACE_UPGRADE_ENTITY.get(), pos, state, 9);
+    }
+
+    protected MEInterfaceUpgradeBlockEntity(BlockEntityType<?> type, BlockPos pos, BlockState state, int slots) {
+        super(type, pos, state);
+        this.logic = new InterfaceLogic(getMainNode(), this, state.getBlock().asItem(), slots);
         // Must follow the logic construction — see MEUpgradeBlockEntity#applyGroupFlags.
         applyGroupFlags();
         getMainNode().setIdlePowerUsage(AOConfig.upgradeIdlePower());
@@ -71,7 +76,7 @@ public class MEInterfaceUpgradeBlockEntity extends MEUpgradeBlockEntity
 
     @Override
     public ItemStack getMainMenuIcon() {
-        return new ItemStack(AOContent.ME_INTERFACE_UPGRADE.get());
+        return new ItemStack(getBlockState().getBlock());
     }
 
     @Override

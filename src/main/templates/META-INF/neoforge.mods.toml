@@ -24,8 +24,7 @@ displayName = "${mod_name}" #mandatory
 #updateJSONURL="https://change.me.example.invalid/updates.json" #optional
 # A URL for the "homepage" for this mod, displayed in the mod UI
 #displayURL="https://change.me.to.your.mods.homepage.example.invalid/" #optional
-# A file name (in the root of the mod JAR) containing a logo for display
-#logoFile="applied_oritech.png" #optional
+logoFile = "assets/applied_oritech/icon.png"
 # A text field displayed in the mod UI
 #credits="" #optional
 # A text field displayed in the mod UI
@@ -86,6 +85,13 @@ side = "BOTH"
 modId = "ae2"
 type = "required"
 versionRange = "[19.2.0,)"
+ordering = "AFTER"
+side = "BOTH"
+
+[[dependencies."${mod_id}"]]
+modId = "extendedae"
+type = "optional"
+versionRange = "[1.21-2.2.36-neoforge,)"
 ordering = "AFTER"
 side = "BOTH"
 
