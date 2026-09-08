@@ -98,7 +98,7 @@ side = "BOTH"
 [[dependencies."${mod_id}"]]
 modId = "appmek"
 type = "optional"
-versionRange = "[1.21,)"
+versionRange = "[1.6.3,)"
 ordering = "AFTER"
 side = "BOTH"
 
