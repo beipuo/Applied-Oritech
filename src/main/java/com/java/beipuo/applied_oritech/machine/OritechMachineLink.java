@@ -11,6 +11,7 @@ import net.minecraft.core.Direction;
 import net.minecraft.world.level.Level;
 
 import rearth.oritech.api.item.ItemApi;
+import rearth.oritech.api.fluid.FluidApi;
 import rearth.oritech.block.entity.MachineCoreEntity;
 import rearth.oritech.block.entity.addons.AddonBlockEntity;
 import rearth.oritech.util.MachineAddonController;
@@ -31,6 +32,7 @@ import rearth.oritech.util.ScreenProvider;
  */
 public record OritechMachineLink(MachineAddonController machine,
                                  ItemApi.InventoryStorage inventory,
+                                 FluidApi.FluidStorage fluidStorage,
                                  int[] inputSlots,
                                  int[] outputSlots) {
 
@@ -60,7 +62,9 @@ public record OritechMachineLink(MachineAddonController machine,
             (slot.output() ? outputs : inputs).add(slot.index());
         }
 
-        return new OritechMachineLink(machine, inventory, toIntArray(inputs), toIntArray(outputs));
+        var fluids = machine instanceof FluidApi.BlockProvider provider
+                ? provider.getFluidStorage(null) : null;
+        return new OritechMachineLink(machine, inventory, fluids, toIntArray(inputs), toIntArray(outputs));
     }
 
     /**
@@ -105,6 +109,10 @@ public record OritechMachineLink(MachineAddonController machine,
 
     public boolean hasOutputs() {
         return outputSlots.length > 0;
+    }
+
+    public boolean hasFluids() {
+        return fluidStorage != null;
     }
 
     /**

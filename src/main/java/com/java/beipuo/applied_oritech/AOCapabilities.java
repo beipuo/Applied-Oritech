@@ -18,6 +18,8 @@ import rearth.oritech.util.MachineAddonController;
 
 import com.java.beipuo.applied_oritech.blockentity.MEPatternProviderUpgradeBlockEntity;
 import com.java.beipuo.applied_oritech.machine.OritechPatternInputStorage;
+import com.java.beipuo.applied_oritech.machine.OritechFluidStorage;
+import com.java.beipuo.applied_oritech.machine.OritechMachineMEStorage;
 
 /**
  * Capability wiring. This is where the bridge is actually made.
@@ -59,6 +61,12 @@ public final class AOCapabilities {
         }
     }
 
+    public static java.util.List<BlockEntityType<?>> oritechBlockEntityTypes() {
+        return BuiltInRegistries.BLOCK_ENTITY_TYPE.entrySet().stream()
+                .filter(entry -> entry.getKey().location().getNamespace().equals(ORITECH_NAMESPACE))
+                .map(java.util.Map.Entry::getValue).toList();
+    }
+
     /**
      * The type parameter matters: passing a {@code BlockEntityType<?>} straight into
      * {@code registerBlockEntity} would force raw types onto the provider lambda too, and the
@@ -78,7 +86,7 @@ public final class AOCapabilities {
         var neighbourPos = blockEntity.getBlockPos().relative(side);
         if (level == null || !level.hasChunkAt(neighbourPos)
                 || !(level.getBlockEntity(neighbourPos) instanceof MEPatternProviderUpgradeBlockEntity)) return null;
-        return new OritechPatternInputStorage(() -> {
+        var itemStorage = new OritechPatternInputStorage(() -> {
             if (blockEntity.isRemoved() || !level.hasChunkAt(neighbourPos)) return null;
             if (!(level.getBlockEntity(neighbourPos) instanceof MEPatternProviderUpgradeBlockEntity upgrade)) return null;
             var controllerPos = resolveControllerPos(blockEntity);
@@ -86,6 +94,13 @@ public final class AOCapabilities {
             return controllerPos != null && machine != null
                     && controllerPos.equals(machine.getPosForAddon()) ? upgrade : null;
         }, blockEntity.getBlockState().getBlock().getName());
+        if (blockEntity instanceof com.java.beipuo.applied_oritech.blockentity.MEUpgradeBlockEntity upgrade
+                && upgrade.getMachineLink() != null && upgrade.getMachineLink().hasFluids()) {
+            return new OritechMachineMEStorage(itemStorage,
+                    new OritechFluidStorage(upgrade.getMachineLink().fluidStorage(),
+                            blockEntity.getBlockState().getBlock().getName()));
+        }
+        return itemStorage;
     }
 
     /**

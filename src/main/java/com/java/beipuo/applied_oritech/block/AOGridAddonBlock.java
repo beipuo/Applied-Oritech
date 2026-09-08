@@ -38,6 +38,8 @@ public abstract class AOGridAddonBlock extends MachineAddonBlock {
     protected void onRemove(BlockState state, Level level, BlockPos pos, BlockState newState,
             boolean movedByPiston) {
         if (!level.isClientSide() && !state.is(newState.getBlock())
+                && state.hasProperty(MachineAddonBlock.ADDON_USED)
+                && state.getValue(MachineAddonBlock.ADDON_USED)
                 && level.getBlockEntity(pos) instanceof AOGridAddonBlockEntity addon) {
             var machine = addon.getMachine();
             if (machine != null) machine.initAddons(pos);

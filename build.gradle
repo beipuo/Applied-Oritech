@@ -172,6 +172,8 @@ dependencies {
     localRuntime "curse.maven:ex-pattern-provider-892005:8811572"
     // CurseMaven does not resolve ExtendedAE's required Glodium dependency.
     localRuntime "io.github.glodblock:Glodium:1.21-2.2-neoforge"
+    compileOnly "curse.maven:applied-mekanistics-574300:7096962"
+    localRuntime "curse.maven:applied-mekanistics-574300:7096962"
 
     // ---- Transitive runtime deps -----------------------------------------------
     // CurseMaven artifacts ship no POM, so nothing resolves transitively. Every hard
