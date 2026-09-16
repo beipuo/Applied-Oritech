@@ -13,20 +13,25 @@ import net.neoforged.neoforge.registries.DeferredHolder;
 import net.neoforged.neoforge.registries.DeferredItem;
 
 import com.java.beipuo.applied_oritech.AOContent;
+import com.java.beipuo.applied_oritech.item.AOAddonBlockItem;
 
 /** Loaded only after the caller has confirmed that ExtendedAE is installed. */
 public final class ExtendedAEContent {
     public static final DeferredBlock<MEExtendedPatternProviderAddonBlock> PATTERN_PROVIDER_BLOCK =
-            AOContent.BLOCKS.register("me_extended_pattern_provider_addon",
-                    () -> new MEExtendedPatternProviderAddonBlock(AOContent.machineAddonProperties()));
+            AOContent.BLOCKS.registerBlock("me_extended_pattern_provider_addon",
+                    MEExtendedPatternProviderAddonBlock::new, AOContent::machineAddonProperties);
     public static final DeferredBlock<MEExtendedInterfaceAddonBlock> INTERFACE_BLOCK =
-            AOContent.BLOCKS.register("me_extended_interface_addon",
-                    () -> new MEExtendedInterfaceAddonBlock(AOContent.machineAddonProperties()));
+            AOContent.BLOCKS.registerBlock("me_extended_interface_addon",
+                    MEExtendedInterfaceAddonBlock::new, AOContent::machineAddonProperties);
 
+    // Registered through AOAddonBlockItem so the block's tooltip (see the Lang file) is shown,
+    // matching the three base addons.
     public static final DeferredItem<BlockItem> PATTERN_PROVIDER =
-            AOContent.ITEMS.registerSimpleBlockItem("me_extended_pattern_provider_addon", PATTERN_PROVIDER_BLOCK);
+            AOContent.ITEMS.registerItem("me_extended_pattern_provider_addon", properties ->
+                    new AOAddonBlockItem(PATTERN_PROVIDER_BLOCK.get(), properties.useBlockDescriptionPrefix()));
     public static final DeferredItem<BlockItem> INTERFACE =
-            AOContent.ITEMS.registerSimpleBlockItem("me_extended_interface_addon", INTERFACE_BLOCK);
+            AOContent.ITEMS.registerItem("me_extended_interface_addon", properties ->
+                    new AOAddonBlockItem(INTERFACE_BLOCK.get(), properties.useBlockDescriptionPrefix()));
 
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<MEExtendedPatternProviderAddonBlockEntity>>
             PATTERN_PROVIDER_ENTITY = AOContent.blockEntity("me_extended_pattern_provider_addon",

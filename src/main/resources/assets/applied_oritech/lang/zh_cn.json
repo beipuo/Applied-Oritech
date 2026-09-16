@@ -16,5 +16,7 @@
   "message.applied_oritech.toggle_off": "关闭",
   "tooltip.applied_oritech.me_dock": "将机器的 ME 插件接入网络，每个扩展坞及其所属插件共用一个频道。",
   "tooltip.applied_oritech.me_pattern_provider_addon": "使用机器执行 ME 自动合成，仅向输入槽投料。潜行空手右键切换产物自动回收。",
-  "tooltip.applied_oritech.me_interface_addon": "将接口中配置的物品补充到机器输入槽，安装合成卡后可请求合成缺少的物品。"
+  "tooltip.applied_oritech.me_interface_addon": "将接口中配置的物品补充到机器输入槽，安装合成卡后可请求合成缺少的物品。",
+  "config.jade.plugin_applied_oritech.grid_node_state": "应用奥瑞科技网络状态",
+  "config.jade.plugin_applied_oritech.pattern_provider": "应用奥瑞科技样板供应器"
 }

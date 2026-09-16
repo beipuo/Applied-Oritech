@@ -14,6 +14,7 @@ import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.material.MapColor;
 import net.neoforged.bus.api.IEventBus;
+import net.neoforged.fml.ModList;
 import net.neoforged.neoforge.registries.DeferredBlock;
 import net.neoforged.neoforge.registries.DeferredHolder;
 import net.neoforged.neoforge.registries.DeferredItem;
@@ -25,6 +26,7 @@ import com.java.beipuo.applied_oritech.block.MEPatternProviderAddonBlock;
 import com.java.beipuo.applied_oritech.blockentity.MEDockBlockEntity;
 import com.java.beipuo.applied_oritech.blockentity.MEInterfaceAddonBlockEntity;
 import com.java.beipuo.applied_oritech.blockentity.MEPatternProviderAddonBlockEntity;
+import com.java.beipuo.applied_oritech.compat.extendedae.ExtendedAEContent;
 import com.java.beipuo.applied_oritech.item.AOAddonBlockItem;
 
 /** Every block, item, block entity type and creative tab this mod registers. */
@@ -84,6 +86,9 @@ public final class AOContent {
                         output.accept(ME_DOCK.get());
                         output.accept(ME_PATTERN_PROVIDER_UPGRADE.get());
                         output.accept(ME_INTERFACE_UPGRADE.get());
+                        if (ModList.get().isLoaded("extendedae")) {
+                            ExtendedAEContent.addCreativeItems(output);
+                        }
                     })
                     .build());
 
@@ -91,6 +96,9 @@ public final class AOContent {
     }
 
     public static void register(IEventBus modEventBus) {
+        if (ModList.get().isLoaded("extendedae")) {
+            ExtendedAEContent.register(modEventBus);
+        }
         for (var name : new String[] { "me_interface", "me_pattern_provider" }) {
             var oldId = Identifier.fromNamespaceAndPath(Applied_oritech.MODID, name + "_upgrade");
             var newId = Identifier.fromNamespaceAndPath(Applied_oritech.MODID, name + "_addon");

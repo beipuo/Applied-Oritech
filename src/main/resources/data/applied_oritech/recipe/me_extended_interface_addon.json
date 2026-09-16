@@ -6,10 +6,10 @@
   "category": "misc",
   "pattern": ["AAA", "ABA", "CDC"],
   "key": {
-    "A": { "tag": "c:plates/plastic" },
-    "B": { "item": "extendedae:ex_interface" },
-    "C": { "item": "ae2:logic_processor" },
-    "D": { "tag": "oritech:plating" }
+    "A": "#c:plates/plastic",
+    "B": "extendedae:ex_interface",
+    "C": "ae2:logic_processor",
+    "D": "#oritech:plating"
   },
   "result": { "id": "applied_oritech:me_extended_interface_addon", "count": 1 }
 }

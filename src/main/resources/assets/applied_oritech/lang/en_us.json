@@ -7,7 +7,7 @@
   "block.applied_oritech.me_extended_pattern_provider_addon": "ME Extended Pattern Provider Addon",
   "block.applied_oritech.me_extended_interface_addon": "ME Extended Interface Addon",
   "tooltip.applied_oritech.me_extended_pattern_provider_addon": "Provides 36 pattern slots. Sneak-right-click with an empty hand to toggle automatic output return.",
-  "tooltip.applied_oritech.me_extended_interface_addon": "Provides 36 stock slots using ExtendedAE's paged interface menu. ",
+  "tooltip.applied_oritech.me_extended_interface_addon": "Provides 36 stock slots using ExtendedAE's paged interface menu.",
 
   "message.applied_oritech.not_attached": "Not attached: place addons against an ME Dock connected to a machine; install the dock in a machine addon slot.",
   "message.applied_oritech.no_dock": "No ME Dock on this machine.",
@@ -19,5 +19,8 @@
 
   "tooltip.applied_oritech.me_dock": "Connects this machine's ME addon modules to an ME network. Each dock and its addons share one channel.",
   "tooltip.applied_oritech.me_pattern_provider_addon": "Lets the ME network craft using this machine. Pushes ingredients into the machine's input slots only.",
-  "tooltip.applied_oritech.me_interface_addon": "Keeps the machine's input slots stocked with the items you configure, requesting crafts when they run out."
+  "tooltip.applied_oritech.me_interface_addon": "Keeps the machine's input slots stocked with the items you configure, requesting crafts when they run out.",
+
+  "config.jade.plugin_applied_oritech.grid_node_state": "Applied Oritech Network State",
+  "config.jade.plugin_applied_oritech.pattern_provider": "Applied Oritech Pattern Provider"
 }

@@ -141,11 +141,15 @@ dependencies {
     implementation "curse.maven:geckolib-388172:${geckolib_file_id}"
     // Client-only CTM library, never referenced from our code
     runtimeOnly "curse.maven:athena-841890:${athena_file_id}"
-}
 
-// ExtendedAE has no 26.1.2 release; retain its sources for a future port.
-sourceSets.main.java.exclude 'com/java/beipuo/applied_oritech/compat/extendedae/**'
-sourceSets.main.resources.exclude '**/me_extended_*'
+    // ---- Optional integration: ExtendedAE ---------------------------------------
+    // compileOnly keeps ExtendedAE out of our published metadata and lets the mod load
+    // when it is absent; localRuntime only runs it in the dev client.
+    compileOnly "curse.maven:ex-pattern-provider-892005:${extendedae_file_id}"
+    localRuntime "curse.maven:ex-pattern-provider-892005:${extendedae_file_id}"
+    // CurseMaven ships no POM, so ExtendedAE's own Glodium dependency has to be named.
+    localRuntime "io.github.glodblock:Glodium:${glodium_version}"
+}
 
 tasks.withType(JavaCompile).configureEach {
     options.encoding = 'UTF-8'
