@@ -1,6 +1,5 @@
 package com.java.beipuo.applied_oritech.block;
 
-import java.util.ArrayList;
 import java.util.EnumMap;
 import java.util.Map;
 
@@ -9,10 +8,8 @@ import org.jetbrains.annotations.Nullable;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.network.chat.Component;
-import net.minecraft.world.Containers;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.BlockGetter;
@@ -25,7 +22,7 @@ import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
-import net.minecraft.world.level.block.state.properties.DirectionProperty;
+import net.minecraft.world.level.block.state.properties.EnumProperty;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.Shapes;
@@ -40,7 +37,7 @@ import com.java.beipuo.applied_oritech.blockentity.MEUpgradeBlockEntity;
  */
 public abstract class MEUpgradeBlock extends AOGridAddonBlock {
 
-    public static final DirectionProperty ORIENTATION = BlockStateProperties.FACING;
+    public static final EnumProperty<Direction> ORIENTATION = BlockStateProperties.FACING;
     private static final Map<Direction, VoxelShape> SHAPES = createShapes();
 
     private static Map<Direction, VoxelShape> createShapes() {
@@ -116,29 +113,6 @@ public abstract class MEUpgradeBlock extends AOGridAddonBlock {
         };
     }
 
-    /**
-     * Encoded patterns, stocked items and upgrade cards live inside AE2 logic objects, not a vanilla
-     * container, so a loot table cannot reach them.
-     *
-     * <p>Done here rather than in {@code playerWillDestroy} so that explosions and any other
-     * non-player removal drop the contents too. The block entity is still present at this point —
-     * vanilla containers rely on the same ordering.
-     */
-    @Override
-    protected void onRemove(BlockState state, Level level, BlockPos pos, BlockState newState,
-            boolean movedByPiston) {
-        if (!level.isClientSide() && !state.is(newState.getBlock())
-                && level.getBlockEntity(pos) instanceof MEUpgradeBlockEntity upgrade) {
-            var drops = new ArrayList<ItemStack>();
-            upgrade.addAdditionalDrops(drops);
-            for (var drop : drops) {
-                Containers.dropItemStack(level, pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5, drop);
-            }
-            upgrade.clearLogicContent();
-        }
-        super.onRemove(state, level, pos, newState, movedByPiston);
-    }
-
     @Override
     protected InteractionResult useWithoutItem(BlockState state, Level level, BlockPos pos, Player player,
             BlockHitResult hit) {
@@ -146,13 +120,13 @@ public abstract class MEUpgradeBlock extends AOGridAddonBlock {
         if (!(level.getBlockEntity(pos) instanceof MEUpgradeBlockEntity upgrade)) return InteractionResult.PASS;
 
         if (!upgrade.isAttachedToMachine()) {
-            player.displayClientMessage(
-                    Component.translatable("message.applied_oritech.not_attached"), true);
+            player.sendOverlayMessage(
+                    Component.translatable("message.applied_oritech.not_attached"));
             return InteractionResult.CONSUME;
         }
         if (upgrade.getDock() == null) {
-            player.displayClientMessage(
-                    Component.translatable("message.applied_oritech.no_dock"), true);
+            player.sendOverlayMessage(
+                    Component.translatable("message.applied_oritech.no_dock"));
             return InteractionResult.CONSUME;
         }
 

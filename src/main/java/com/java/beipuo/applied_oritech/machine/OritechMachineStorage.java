@@ -1,6 +1,8 @@
 package com.java.beipuo.applied_oritech.machine;
 
 import net.minecraft.network.chat.Component;
+import net.neoforged.neoforge.transfer.item.ItemResource;
+import net.neoforged.neoforge.transfer.transaction.Transaction;
 
 import appeng.api.config.Actionable;
 import appeng.api.networking.security.IActionSource;
@@ -38,23 +40,18 @@ public class OritechMachineStorage implements MEStorage {
         if (!(what instanceof AEItemKey itemKey) || amount <= 0 || !link.hasInputs()) return 0;
 
         var inventory = link.inventory();
+        var resource = itemKey.toResource();
         long inserted = 0;
 
-        for (var slot : link.inputSlots()) {
-            if (inserted >= amount) break;
-
-            var remaining = amount - inserted;
-            // A slot limit is the ceiling for one slot; ItemStack counts are ints, so clamp
-            // before building the probe stack.
-            var slotLimit = Math.max(1, inventory.getSlotLimit(slot));
-            var want = (int) Math.min(remaining, Math.min(slotLimit, Integer.MAX_VALUE));
-
-            var moved = inventory.insertToSlot(itemKey.toStack(want), slot, mode == Actionable.SIMULATE);
-            inserted += moved;
-        }
-
-        if (inserted > 0 && mode == Actionable.MODULATE) {
-            inventory.update();
+        try (var transaction = Transaction.openRoot()) {
+            for (var slot : link.inputSlots()) {
+                if (inserted >= amount) break;
+                var remaining = amount - inserted;
+                var slotLimit = inventory.getCapacityAsLong(slot, resource);
+                var want = (int) Math.min(remaining, Math.min(slotLimit, Integer.MAX_VALUE));
+                inserted += inventory.insert(slot, resource, want, transaction);
+            }
+            if (mode == Actionable.MODULATE) transaction.commit();
         }
         return inserted;
     }
@@ -66,22 +63,17 @@ public class OritechMachineStorage implements MEStorage {
         var inventory = link.inventory();
         long extracted = 0;
 
-        for (var slot : link.outputSlots()) {
-            if (extracted >= amount) break;
-
-            var present = inventory.getStackInSlot(slot);
-            if (present.isEmpty() || !itemKey.equals(AEItemKey.of(present))) continue;
-
-            var remaining = amount - extracted;
-            var want = (int) Math.min(remaining, present.getCount());
-            if (want <= 0) continue;
-
-            var moved = inventory.extractFromSlot(itemKey.toStack(want), slot, mode == Actionable.SIMULATE);
-            extracted += moved;
-        }
-
-        if (extracted > 0 && mode == Actionable.MODULATE) {
-            inventory.update();
+        try (var transaction = Transaction.openRoot()) {
+            for (var slot : link.outputSlots()) {
+                if (extracted >= amount) break;
+                var present = link.stackInSlot(slot);
+                if (present.isEmpty() || !itemKey.equals(AEItemKey.of(present))) continue;
+                var remaining = amount - extracted;
+                var want = (int) Math.min(remaining, present.getCount());
+                if (want <= 0) continue;
+                extracted += inventory.extract(slot, ItemResource.of(present), want, transaction);
+            }
+            if (mode == Actionable.MODULATE) transaction.commit();
         }
         return extracted;
     }
@@ -94,9 +86,8 @@ public class OritechMachineStorage implements MEStorage {
     public void getAvailableStacks(KeyCounter out) {
         if (!link.hasOutputs()) return;
 
-        var inventory = link.inventory();
         for (var slot : link.outputSlots()) {
-            var stack = inventory.getStackInSlot(slot);
+            var stack = link.stackInSlot(slot);
             if (stack.isEmpty()) continue;
             var key = AEItemKey.of(stack);
             if (key != null) out.add(key, stack.getCount());

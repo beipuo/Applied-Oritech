@@ -4,8 +4,8 @@ import org.jetbrains.annotations.Nullable;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-import net.minecraft.core.HolderLookup;
-import net.minecraft.nbt.CompoundTag;
+import net.minecraft.world.level.storage.ValueInput;
+import net.minecraft.world.level.storage.ValueOutput;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 
@@ -102,15 +102,15 @@ public abstract class AOGridAddonBlockEntity extends AddonBlockEntity implements
     }
 
     @Override
-    protected void saveAdditional(CompoundTag nbt, HolderLookup.Provider registries) {
-        super.saveAdditional(nbt, registries);
-        mainNode.saveToNBT(nbt);
+    protected void saveAdditional(ValueOutput output) {
+        super.saveAdditional(output);
+        mainNode.serialize(output);
     }
 
     @Override
-    protected void loadAdditional(CompoundTag nbt, HolderLookup.Provider registries) {
-        super.loadAdditional(nbt, registries);
-        mainNode.loadFromNBT(nbt);
+    protected void loadAdditional(ValueInput input) {
+        super.loadAdditional(input);
+        mainNode.deserialize(input);
     }
 
     // ---- Oritech machine attachment -------------------------------------------------------
@@ -144,10 +144,8 @@ public abstract class AOGridAddonBlockEntity extends AddonBlockEntity implements
     /**
      * Spends Oritech RF from the attached machine's buffer.
      *
-     * <p>Deliberately writes {@code amount} directly instead of calling
-     * {@code DynamicEnergyStorage#extract}: that method is capped by {@code maxExtract}, which is
-     * zero on machines that never push energy out, so extract() would always return 0. Oritech's
-     * own machines pay for recipes the same way (see {@code MachineBlockEntity#tick}).
+     * <p>Uses the internal energy setter because external extraction is capped by
+     * {@code maxExtract}, which is zero on machines that never push energy out.
      *
      * @return true when the full cost was paid; false leaves the buffer untouched.
      */
@@ -158,9 +156,9 @@ public abstract class AOGridAddonBlockEntity extends AddonBlockEntity implements
         if (machine == null) return false;
 
         var storage = machine.getStorageForAddon();
-        if (storage == null || storage.amount < cost) return false;
+        if (storage == null || storage.energy < cost) return false;
 
-        storage.amount -= cost;
+        storage.set(storage.energy - cost);
         if (machine instanceof net.minecraft.world.level.block.entity.BlockEntity entity) {
             entity.setChanged();
         }
@@ -171,6 +169,15 @@ public abstract class AOGridAddonBlockEntity extends AddonBlockEntity implements
         var machine = getMachine();
         if (machine == null) return false;
         var storage = machine.getStorageForAddon();
-        return cost <= 0 || storage != null && storage.amount >= cost;
+        return cost <= 0 || storage != null && storage.energy >= cost;
+    }
+
+    @Override
+    public void preRemoveSideEffects(BlockPos pos, BlockState state) {
+        if (level != null && !level.isClientSide()) {
+            var machine = getMachine();
+            if (machine != null) machine.initAddons(pos);
+        }
+        super.preRemoveSideEffects(pos, state);
     }
 }

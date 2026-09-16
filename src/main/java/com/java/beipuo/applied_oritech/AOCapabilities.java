@@ -55,7 +55,7 @@ public final class AOCapabilities {
         // per-lookup by resolveControllerPos, so registering broadly costs nothing but saves us
         // hard-coding a list of machine types that changes with every Oritech release.
         for (var entry : BuiltInRegistries.BLOCK_ENTITY_TYPE.entrySet()) {
-            var namespace = entry.getKey().location().getNamespace();
+            var namespace = entry.getKey().identifier().getNamespace();
             if (!namespace.equals(ORITECH_NAMESPACE) && !namespace.equals(Applied_oritech.MODID)) continue;
             registerMachineStorage(event, entry.getValue());
         }
@@ -63,7 +63,7 @@ public final class AOCapabilities {
 
     public static java.util.List<BlockEntityType<?>> oritechBlockEntityTypes() {
         return BuiltInRegistries.BLOCK_ENTITY_TYPE.entrySet().stream()
-                .filter(entry -> entry.getKey().location().getNamespace().equals(ORITECH_NAMESPACE))
+                .filter(entry -> entry.getKey().identifier().getNamespace().equals(ORITECH_NAMESPACE))
                 .map(java.util.Map.Entry::getValue).toList();
     }
 

@@ -6,9 +6,10 @@
 
 ## 运行环境
 
-- Minecraft 1.21.1 / NeoForge
-- Applied Energistics 2（AE2）19.2.0 或更新版本
-- Oritech 1.2.12 或更新版本
+- Minecraft 26.1.2 / NeoForge 26.1.2.77 或更新的 26.1.2 版本 / Java 25
+- Applied Energistics 2（AE2）26.1.10-beta
+- Oritech 2.0.0-exp6
+- GuideME 26.1.12-beta、Architectury 20.1.14、Athena 4.7.3、GeckoLib 5.5.2
 - 各前置模组所需的依赖
 
 请使用对应 Minecraft 版本和加载器的模组文件。
@@ -36,22 +37,17 @@
 
 ## ExtendedAE 联动
 
-安装 ExtendedAE 后，会额外注册以下组件：
-
-| 组件 | 功能 |
-| --- | --- |
-| ME 扩展样板供应器插件 | 提供 36 个样板槽，复用 ExtendedAE 的扩展样板供应器界面。 |
-| ME 扩展接口插件 | 提供 36 个库存配置槽，复用 ExtendedAE 的分页接口界面。 |
-
-扩展插件沿用本模组的外形、六向放置和碰撞箱，使用 ExtendedAE 对应部件的贴图组合。
-
-兼容接入版本为 ExtendedAE `1.21-2.2.36-neoforge`。ExtendedAE 为可选依赖，未安装时不会注册这两个扩展插件。
+ExtendedAE 暂无 26.1.2 版本，本分支暂不注册或打包两个扩展插件。旧版联动源码保留，待其发布后再迁移。
 
 ## 物流与配置
 
-当前机器物流适配处理物品：投料仅进入输入槽，产物回收仅从输出槽提取，暂不包含流体传输。
+物品投料仅进入输入槽，产物回收仅从输出槽提取。保留原分支的有限流体桥接；接口补货和自动产物回收仍只处理物品。
 
 配置中可调整扩展坞与插件的 ME 网络待机耗能、每次传输消耗的机器 RF，以及样板供应器插件默认是否自动回收产物。
+
+## 开发与验证
+
+使用 Java 25 执行 `./gradlew build`。开发客户端使用 `./gradlew runClient`，运行目录为 `run-26.1.2`，与旧版 `run` 隔离。额外的开发用模组（例如 JEI）放入 `run-26.1.2/mods`。
 
 ## 致谢
 

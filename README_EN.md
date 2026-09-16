@@ -6,9 +6,10 @@ Applied Oritech integrates **Applied Energistics 2 (AE2)** with **Oritech**. It 
 
 ## Requirements
 
-- Minecraft 1.21.1 / NeoForge
-- Applied Energistics 2 (AE2) 19.2.0 or newer
-- Oritech 1.2.12 or newer
+- Minecraft 26.1.2 / NeoForge 26.1.2.77 or newer for 26.1.2 / Java 25
+- Applied Energistics 2 (AE2) 26.1.10-beta
+- Oritech 2.0.0-exp6
+- GuideME 26.1.12-beta, Architectury 20.1.14, Athena 4.7.3, GeckoLib 5.5.2
 - The dependencies required by those mods
 
 Use mod files intended for the matching Minecraft version and loader.
@@ -36,22 +37,17 @@ Right-click the dock to view its connection status. The machine must still meet 
 
 ## ExtendedAE Integration
 
-When ExtendedAE is installed, two additional components are registered:
-
-| Component | Function |
-| --- | --- |
-| ME Extended Pattern Provider Addon | Provides 36 pattern slots and reuses ExtendedAE's extended pattern provider GUI. |
-| ME Extended Interface Addon | Provides 36 stock configuration slots and reuses ExtendedAE's paged interface GUI. |
-
-These addons use Applied Oritech's models, directional placement, and collision shapes, with the texture combinations used by the corresponding ExtendedAE parts.
-
-The integration targets ExtendedAE `1.21-2.2.36-neoforge`. ExtendedAE is optional; these two addons are not registered when it is absent.
+ExtendedAE has no 26.1.2 release yet. This branch does not register or package its two addons. Their legacy sources are retained for a future port.
 
 ## Transfers and Configuration
 
-The current machine adapter handles items: ingredients go only into input slots, and automatic return extracts only from output slots. Fluid transfer is not currently included.
+Item ingredients go only into input slots, and automatic return extracts only from output slots. The limited fluid bridge from the original branch is retained; interface stocking and automatic output return still handle items only.
 
 Configuration options control ME network idle power for docks and addons, machine RF consumption per transfer, and whether automatic output return is enabled by default.
+
+## Development and Verification
+
+Build with Java 25 using `./gradlew build`. Start the development client with `./gradlew runClient`. Its `run-26.1.2` directory is separate from the old `run` directory. Put additional development mods such as JEI in `run-26.1.2/mods`.
 
 ## Credits
 

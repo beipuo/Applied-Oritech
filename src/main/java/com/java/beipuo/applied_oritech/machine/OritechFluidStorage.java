@@ -7,16 +7,17 @@ import appeng.api.stacks.AEKey;
 import appeng.api.stacks.KeyCounter;
 import appeng.api.storage.MEStorage;
 
-import dev.architectury.fluid.FluidStack;
-import rearth.oritech.api.fluid.FluidApi;
+import net.neoforged.neoforge.transfer.ResourceHandler;
+import net.neoforged.neoforge.transfer.fluid.FluidResource;
+import net.neoforged.neoforge.transfer.transaction.Transaction;
 
 import net.minecraft.network.chat.Component;
 
 public final class OritechFluidStorage implements MEStorage {
-    private final FluidApi.FluidStorage storage;
+    private final ResourceHandler<FluidResource> storage;
     private final Component description;
 
-    public OritechFluidStorage(FluidApi.FluidStorage storage, Component description) {
+    public OritechFluidStorage(ResourceHandler<FluidResource> storage, Component description) {
         this.storage = storage;
         this.description = description;
     }
@@ -24,23 +25,30 @@ public final class OritechFluidStorage implements MEStorage {
     @Override
     public long insert(AEKey what, long amount, Actionable mode, IActionSource source) {
         if (!(what instanceof AEFluidKey fluid) || amount <= 0) return 0;
-        var moved = storage.insert(FluidStack.create(fluid.getFluid(), amount), mode == Actionable.SIMULATE);
-        if (moved > 0 && mode == Actionable.MODULATE) storage.update();
-        return moved;
+        try (var transaction = Transaction.openRoot()) {
+            var moved = storage.insert(FluidResource.of(fluid.toStack(1)),
+                    (int) Math.min(amount, Integer.MAX_VALUE), transaction);
+            if (mode == Actionable.MODULATE) transaction.commit();
+            return moved;
+        }
     }
 
     @Override
     public long extract(AEKey what, long amount, Actionable mode, IActionSource source) {
         if (!(what instanceof AEFluidKey fluid) || amount <= 0) return 0;
-        var moved = storage.extract(FluidStack.create(fluid.getFluid(), amount), mode == Actionable.SIMULATE);
-        if (moved > 0 && mode == Actionable.MODULATE) storage.update();
-        return moved;
+        try (var transaction = Transaction.openRoot()) {
+            var moved = storage.extract(FluidResource.of(fluid.toStack(1)),
+                    (int) Math.min(amount, Integer.MAX_VALUE), transaction);
+            if (mode == Actionable.MODULATE) transaction.commit();
+            return moved;
+        }
     }
 
     @Override
     public void getAvailableStacks(KeyCounter out) {
-        for (var stack : storage.getContent()) {
-            if (!stack.isEmpty()) out.add(AEFluidKey.of(stack.getFluid()), stack.getAmount());
+        for (int slot = 0; slot < storage.size(); slot++) {
+            var resource = storage.getResource(slot);
+            if (!resource.isEmpty()) out.add(AEFluidKey.of(resource.toStack(1)), storage.getAmountAsLong(slot));
         }
     }
 

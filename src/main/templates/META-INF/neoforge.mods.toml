@@ -77,28 +77,14 @@ side = "BOTH"
 [[dependencies."${mod_id}"]]
 modId = "oritech"
 type = "required"
-versionRange = "[1.2.12,)"
+versionRange = "[2.0.0-exp6,)"
 ordering = "AFTER"
 side = "BOTH"
 
 [[dependencies."${mod_id}"]]
 modId = "ae2"
 type = "required"
-versionRange = "[19.2.0,)"
-ordering = "AFTER"
-side = "BOTH"
-
-[[dependencies."${mod_id}"]]
-modId = "extendedae"
-type = "optional"
-versionRange = "[1.21-2.2.36-neoforge,)"
-ordering = "AFTER"
-side = "BOTH"
-
-[[dependencies."${mod_id}"]]
-modId = "appmek"
-type = "optional"
-versionRange = "[1.6.3,)"
+versionRange = "[26.1.10-beta,)"
 ordering = "AFTER"
 side = "BOTH"
 

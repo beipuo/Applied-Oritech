@@ -47,7 +47,7 @@ public final class OritechPatternInputStorage implements MEStorage {
         if (link == null) return;
         // AE2 uses this list for blocking mode. Extraction remains disabled.
         for (var slot : link.inputSlots()) {
-            var stack = link.inventory().getStackInSlot(slot);
+            var stack = link.stackInSlot(slot);
             if (!stack.isEmpty()) out.add(AEItemKey.of(stack), stack.getCount());
         }
     }

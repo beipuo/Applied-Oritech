@@ -4,7 +4,7 @@ import java.util.function.Supplier;
 
 import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.level.block.Block;
@@ -14,7 +14,6 @@ import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.material.MapColor;
 import net.neoforged.bus.api.IEventBus;
-import net.neoforged.fml.ModList;
 import net.neoforged.neoforge.registries.DeferredBlock;
 import net.neoforged.neoforge.registries.DeferredHolder;
 import net.neoforged.neoforge.registries.DeferredItem;
@@ -26,7 +25,7 @@ import com.java.beipuo.applied_oritech.block.MEPatternProviderUpgradeBlock;
 import com.java.beipuo.applied_oritech.blockentity.MEDockBlockEntity;
 import com.java.beipuo.applied_oritech.blockentity.MEInterfaceUpgradeBlockEntity;
 import com.java.beipuo.applied_oritech.blockentity.MEPatternProviderUpgradeBlockEntity;
-import com.java.beipuo.applied_oritech.compat.extendedae.ExtendedAEContent;
+import com.java.beipuo.applied_oritech.item.AOAddonBlockItem;
 
 /** Every block, item, block entity type and creative tab this mod registers. */
 public final class AOContent {
@@ -43,22 +42,25 @@ public final class AOContent {
     // ---- blocks ---------------------------------------------------------------------------
 
     public static final DeferredBlock<MEDockBlock> ME_DOCK_BLOCK =
-            BLOCKS.register("me_dock", () -> new MEDockBlock(machineAddonProperties()));
+            BLOCKS.registerBlock("me_dock", MEDockBlock::new, AOContent::machineAddonProperties);
     public static final DeferredBlock<MEPatternProviderUpgradeBlock> ME_PATTERN_PROVIDER_UPGRADE_BLOCK =
-            BLOCKS.register("me_pattern_provider_addon",
-                    () -> new MEPatternProviderUpgradeBlock(machineAddonProperties()));
+            BLOCKS.registerBlock("me_pattern_provider_addon",
+                    MEPatternProviderUpgradeBlock::new, AOContent::machineAddonProperties);
     public static final DeferredBlock<MEInterfaceUpgradeBlock> ME_INTERFACE_UPGRADE_BLOCK =
-            BLOCKS.register("me_interface_addon",
-                    () -> new MEInterfaceUpgradeBlock(machineAddonProperties()));
+            BLOCKS.registerBlock("me_interface_addon",
+                    MEInterfaceUpgradeBlock::new, AOContent::machineAddonProperties);
 
     // ---- items ----------------------------------------------------------------------------
 
     public static final DeferredItem<BlockItem> ME_DOCK =
-            ITEMS.registerSimpleBlockItem("me_dock", ME_DOCK_BLOCK);
+            ITEMS.registerItem("me_dock", properties ->
+                    new AOAddonBlockItem(ME_DOCK_BLOCK.get(), properties.useBlockDescriptionPrefix()));
     public static final DeferredItem<BlockItem> ME_PATTERN_PROVIDER_UPGRADE =
-            ITEMS.registerSimpleBlockItem("me_pattern_provider_addon", ME_PATTERN_PROVIDER_UPGRADE_BLOCK);
+            ITEMS.registerItem("me_pattern_provider_addon", properties ->
+                    new AOAddonBlockItem(ME_PATTERN_PROVIDER_UPGRADE_BLOCK.get(), properties.useBlockDescriptionPrefix()));
     public static final DeferredItem<BlockItem> ME_INTERFACE_UPGRADE =
-            ITEMS.registerSimpleBlockItem("me_interface_addon", ME_INTERFACE_UPGRADE_BLOCK);
+            ITEMS.registerItem("me_interface_addon", properties ->
+                    new AOAddonBlockItem(ME_INTERFACE_UPGRADE_BLOCK.get(), properties.useBlockDescriptionPrefix()));
 
     // ---- block entities -------------------------------------------------------------------
 
@@ -82,9 +84,6 @@ public final class AOContent {
                         output.accept(ME_DOCK.get());
                         output.accept(ME_PATTERN_PROVIDER_UPGRADE.get());
                         output.accept(ME_INTERFACE_UPGRADE.get());
-                        if (ModList.get().isLoaded("extendedae")) {
-                            ExtendedAEContent.addCreativeItems(output);
-                        }
                     })
                     .build());
 
@@ -92,12 +91,9 @@ public final class AOContent {
     }
 
     public static void register(IEventBus modEventBus) {
-        if (ModList.get().isLoaded("extendedae")) {
-            ExtendedAEContent.register(modEventBus);
-        }
         for (var name : new String[] { "me_interface", "me_pattern_provider" }) {
-            var oldId = ResourceLocation.fromNamespaceAndPath(Applied_oritech.MODID, name + "_upgrade");
-            var newId = ResourceLocation.fromNamespaceAndPath(Applied_oritech.MODID, name + "_addon");
+            var oldId = Identifier.fromNamespaceAndPath(Applied_oritech.MODID, name + "_upgrade");
+            var newId = Identifier.fromNamespaceAndPath(Applied_oritech.MODID, name + "_addon");
             BLOCKS.addAlias(oldId, newId);
             ITEMS.addAlias(oldId, newId);
             BLOCK_ENTITIES.addAlias(oldId, newId);
@@ -119,6 +115,6 @@ public final class AOContent {
     public static <T extends BlockEntity> DeferredHolder<BlockEntityType<?>, BlockEntityType<T>> blockEntity(
             String name, BlockEntityType.BlockEntitySupplier<T> factory, Supplier<? extends Block> block) {
         return BLOCK_ENTITIES.register(name,
-                () -> BlockEntityType.Builder.of(factory, block.get()).build(null));
+                () -> new BlockEntityType<>(factory, block.get()));
     }
 }

@@ -10,8 +10,12 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.level.Level;
 
-import rearth.oritech.api.item.ItemApi;
-import rearth.oritech.api.fluid.FluidApi;
+import net.minecraft.world.item.ItemStack;
+import net.neoforged.neoforge.transfer.StacksResourceHandler;
+import net.neoforged.neoforge.transfer.ResourceHandler;
+import net.neoforged.neoforge.transfer.item.ItemResource;
+import net.neoforged.neoforge.transfer.fluid.FluidResource;
+import rearth.oritech.api.transfer.fluid.FluidProvider;
 import rearth.oritech.block.entity.MachineCoreEntity;
 import rearth.oritech.block.entity.addons.AddonBlockEntity;
 import rearth.oritech.util.MachineAddonController;
@@ -20,7 +24,7 @@ import rearth.oritech.util.ScreenProvider;
 /**
  * A resolved view of the Oritech machine an addon is attached to.
  *
- * <p>Oritech exposes a machine's whole inventory as one flat {@link ItemApi.InventoryStorage},
+ * <p>Oritech exposes a machine's whole inventory as one flat {@link StacksResourceHandler},
  * with no notion of which slots are recipe inputs and which hold results. That distinction
  * only lives in the machine's {@link ScreenProvider}: {@link ScreenProvider#getGuiSlots()}
  * returns one {@link ScreenProvider.GuiSlot} per slot, each carrying an {@code output} flag
@@ -31,8 +35,8 @@ import rearth.oritech.util.ScreenProvider;
  * shove ingredients into a machine's result slot.
  */
 public record OritechMachineLink(MachineAddonController machine,
-                                 ItemApi.InventoryStorage inventory,
-                                 FluidApi.FluidStorage fluidStorage,
+                                 StacksResourceHandler<ItemStack, ItemResource> inventory,
+                                 ResourceHandler<FluidResource> fluidStorage,
                                  int[] inputSlots,
                                  int[] outputSlots) {
 
@@ -55,30 +59,21 @@ public record OritechMachineLink(MachineAddonController machine,
 
         var inputs = new ArrayList<Integer>();
         var outputs = new ArrayList<Integer>();
-        var slotCount = inventory.getSlotCount();
+        var slotCount = inventory.size();
         for (var slot : slots) {
             // Guard against a GUI describing slots the storage does not actually have.
             if (slot.index() < 0 || slot.index() >= slotCount) continue;
             (slot.output() ? outputs : inputs).add(slot.index());
         }
 
-        var fluids = machine instanceof FluidApi.BlockProvider provider
-                ? provider.getFluidStorage(null) : null;
+        var fluids = machine instanceof FluidProvider provider
+                ? provider.getFluidLookup(null) : null;
         return new OritechMachineLink(machine, inventory, fluids, toIntArray(inputs), toIntArray(outputs));
     }
 
-    /**
-     * Prefers the same path Oritech's own inventory proxy addon uses
-     * ({@code ItemApi.BlockProvider#getInventoryStorage}) so we see exactly the storage the
-     * GUI slot indices refer to, and falls back to the addon API for controllers that only
-     * implement that.
-     */
+    /** The addon inventory uses the same slot indices as the machine's GUI. */
     @Nullable
-    private static ItemApi.InventoryStorage inventoryOf(MachineAddonController machine) {
-        if (machine instanceof ItemApi.BlockProvider provider) {
-            var storage = provider.getInventoryStorage(null);
-            if (storage != null) return storage;
-        }
+    private static StacksResourceHandler<ItemStack, ItemResource> inventoryOf(MachineAddonController machine) {
         return machine.getInventoryForAddon();
     }
 
@@ -105,6 +100,10 @@ public record OritechMachineLink(MachineAddonController machine,
 
     public boolean hasInputs() {
         return inputSlots.length > 0;
+    }
+
+    public ItemStack stackInSlot(int slot) {
+        return inventory.getResource(slot).toStack((int) inventory.getAmountAsLong(slot));
     }
 
     public boolean hasOutputs() {

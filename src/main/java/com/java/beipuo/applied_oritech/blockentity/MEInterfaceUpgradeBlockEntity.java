@@ -6,10 +6,10 @@ import org.jetbrains.annotations.Nullable;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-import net.minecraft.core.HolderLookup;
-import net.minecraft.nbt.CompoundTag;
+import net.minecraft.world.level.storage.ValueInput;
+import net.minecraft.world.level.storage.ValueOutput;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
@@ -99,7 +99,7 @@ public class MEInterfaceUpgradeBlockEntity extends MEUpgradeBlockEntity
     /** Lets AE2's interface menu find the upgrade card slots. */
     @Nullable
     @Override
-    public InternalInventory getSubInventory(ResourceLocation id) {
+    public InternalInventory getSubInventory(Identifier id) {
         return id.equals(UPGRADES) ? logic.getUpgrades() : null;
     }
 
@@ -150,15 +150,15 @@ public class MEInterfaceUpgradeBlockEntity extends MEUpgradeBlockEntity
     // ---- persistence ----------------------------------------------------------------------
 
     @Override
-    protected void saveAdditional(CompoundTag nbt, HolderLookup.Provider registries) {
-        super.saveAdditional(nbt, registries);
-        logic.writeToNBT(nbt, registries);
+    protected void saveAdditional(ValueOutput output) {
+        super.saveAdditional(output);
+        logic.writeToNBT(output);
     }
 
     @Override
-    protected void loadAdditional(CompoundTag nbt, HolderLookup.Provider registries) {
-        super.loadAdditional(nbt, registries);
-        logic.readFromNBT(nbt, registries);
+    protected void loadAdditional(ValueInput input) {
+        super.loadAdditional(input);
+        logic.readFromNBT(input);
     }
 
     /** Stocked items and installed upgrade cards must survive breaking the block. */

@@ -11,6 +11,7 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.redstone.Orientation;
 import net.minecraft.world.level.block.Block;
 
 import appeng.menu.locator.MenuLocators;
@@ -44,8 +45,8 @@ public class MEPatternProviderUpgradeBlock extends MEUpgradeBlock {
 
     @Override
     public void neighborChanged(BlockState state, Level level, BlockPos pos, Block block,
-            BlockPos fromPos, boolean isMoving) {
-        super.neighborChanged(state, level, pos, block, fromPos, isMoving);
+            @Nullable Orientation orientation, boolean isMoving) {
+        super.neighborChanged(state, level, pos, block, orientation, isMoving);
         if (!level.isClientSide() && level.getBlockEntity(pos) instanceof MEPatternProviderUpgradeBlockEntity provider) {
             provider.getLogic().updateRedstoneState();
         }
@@ -61,10 +62,9 @@ public class MEPatternProviderUpgradeBlock extends MEUpgradeBlock {
             var enabled = provider.toggleAutoReturn();
             var stateLabel = Component.translatable(
                     enabled ? "message.applied_oritech.toggle_on" : "message.applied_oritech.toggle_off");
-            player.displayClientMessage(
+            player.sendOverlayMessage(
                     Component.translatable("message.applied_oritech.auto_return", stateLabel)
-                            .withStyle(enabled ? ChatFormatting.GREEN : ChatFormatting.YELLOW),
-                    true);
+                            .withStyle(enabled ? ChatFormatting.GREEN : ChatFormatting.YELLOW));
             return InteractionResult.CONSUME;
         }
 

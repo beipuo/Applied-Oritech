@@ -1,6 +1,7 @@
 package com.java.beipuo.applied_oritech.blockentity;
 
 import java.util.Collections;
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
@@ -9,6 +10,7 @@ import org.jetbrains.annotations.Nullable;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.Containers;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 
@@ -153,6 +155,19 @@ public abstract class MEUpgradeBlockEntity extends AOGridAddonBlockEntity implem
      * dropped, so nothing can be recovered twice.
      */
     public abstract void clearLogicContent();
+
+    @Override
+    public void preRemoveSideEffects(BlockPos pos, BlockState state) {
+        if (level != null && !level.isClientSide()) {
+            var drops = new ArrayList<ItemStack>();
+            addAdditionalDrops(drops);
+            for (var drop : drops) {
+                Containers.dropItemStack(level, pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5, drop);
+            }
+            clearLogicContent();
+        }
+        super.preRemoveSideEffects(pos, state);
+    }
 
     /**
      * Oritech calls this whenever a machine claims or releases an addon, so it is the earliest

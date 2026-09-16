@@ -5,8 +5,10 @@ import java.util.List;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-import net.minecraft.core.HolderLookup;
-import net.minecraft.nbt.CompoundTag;
+import net.minecraft.world.level.storage.ValueInput;
+import net.minecraft.world.level.storage.ValueOutput;
+import net.neoforged.neoforge.transfer.item.ItemResource;
+import net.neoforged.neoforge.transfer.transaction.Transaction;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
@@ -138,7 +140,7 @@ public class MEPatternProviderUpgradeBlockEntity extends MEUpgradeBlockEntity
         var inventory = link.inventory();
 
         for (var slot : link.outputSlots()) {
-            var stack = inventory.getStackInSlot(slot);
+            var stack = link.stackInSlot(slot);
             if (stack.isEmpty()) continue;
 
             var key = AEItemKey.of(stack);
@@ -149,34 +151,34 @@ public class MEPatternProviderUpgradeBlockEntity extends MEUpgradeBlockEntity
 
             if (!spendMachineEnergy(AOConfig.rfPerTransfer())) break;
 
-            var original = stack.copy();
-            var taken = inventory.extractFromSlot(key.toStack((int) accepted), slot, false);
+            int taken;
+            try (var transaction = Transaction.openRoot()) {
+                taken = inventory.extract(slot, ItemResource.of(stack), (int) accepted, transaction);
+                transaction.commit();
+            }
             if (taken <= 0) continue;
             // The local AE2 buffer persists overflow and notifies crafting-lock tracking on return.
             var stored = returns.insert(key, taken, Actionable.MODULATE, actionSource);
             if (stored < taken) {
-                inventory.setStackInSlot(slot, original.copyWithCount(original.getCount() - (int) stored));
+                inventory.set(slot, ItemResource.of(stack), stack.getCount() - (int) stored);
             }
-            inventory.update();
         }
     }
 
     // ---- persistence ----------------------------------------------------------------------
 
     @Override
-    protected void saveAdditional(CompoundTag nbt, HolderLookup.Provider registries) {
-        super.saveAdditional(nbt, registries);
-        logic.writeToNBT(nbt, registries);
-        nbt.putBoolean("auto_return", autoReturn);
+    protected void saveAdditional(ValueOutput output) {
+        super.saveAdditional(output);
+        logic.writeToNBT(output);
+        output.putBoolean("auto_return", autoReturn);
     }
 
     @Override
-    protected void loadAdditional(CompoundTag nbt, HolderLookup.Provider registries) {
-        super.loadAdditional(nbt, registries);
-        logic.readFromNBT(nbt, registries);
-        if (nbt.contains("auto_return")) {
-            autoReturn = nbt.getBoolean("auto_return");
-        }
+    protected void loadAdditional(ValueInput input) {
+        super.loadAdditional(input);
+        logic.readFromNBT(input);
+        autoReturn = input.getBooleanOr("auto_return", AOConfig.autoReturnOutputsByDefault());
     }
 
     /** Encoded patterns and anything left in the return inventory must not be destroyed. */

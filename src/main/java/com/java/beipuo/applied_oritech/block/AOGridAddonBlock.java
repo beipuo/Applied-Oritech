@@ -1,11 +1,12 @@
 package com.java.beipuo.applied_oritech.block;
 
-import java.util.List;
+import java.util.function.Consumer;
 
 import org.jetbrains.annotations.Nullable;
 
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.component.DataComponentGetter;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
@@ -35,22 +36,9 @@ public abstract class AOGridAddonBlock extends MachineAddonBlock {
     }
 
     @Override
-    protected void onRemove(BlockState state, Level level, BlockPos pos, BlockState newState,
-            boolean movedByPiston) {
-        if (!level.isClientSide() && !state.is(newState.getBlock())
-                && state.hasProperty(MachineAddonBlock.ADDON_USED)
-                && state.getValue(MachineAddonBlock.ADDON_USED)
-                && level.getBlockEntity(pos) instanceof AOGridAddonBlockEntity addon) {
-            var machine = addon.getMachine();
-            if (machine != null) machine.initAddons(pos);
-        }
-        super.onRemove(state, level, pos, newState, movedByPiston);
-    }
-
-    @Override
-    public void appendHoverText(ItemStack stack, Item.TooltipContext context,
-            List<Component> tooltip, TooltipFlag flag) {
-        tooltip.add(Component.translatable(getDescriptionId().replace("block.", "tooltip."))
+    public void addToTooltip(Item.TooltipContext context, Consumer<Component> tooltip,
+            TooltipFlag flag, DataComponentGetter components) {
+        tooltip.accept(Component.translatable(getDescriptionId().replace("block.", "tooltip."))
                 .withStyle(ChatFormatting.GRAY));
     }
 }

@@ -46,9 +46,9 @@ public class MEDockBlock extends AOGridAddonBlock {
         if (!level.isClientSide() && level.getBlockEntity(pos) instanceof MEDockBlockEntity dock) {
             var message = dock.getMachine() == null ? "not_attached"
                     : dock.isOnline() ? "dock_online" : "dock_offline";
-            player.displayClientMessage(Component.translatable("message.applied_oritech." + message,
-                    dock.findGroupUpgrades().size()), true);
+            player.sendOverlayMessage(Component.translatable("message.applied_oritech." + message,
+                    dock.findGroupUpgrades().size()));
         }
-        return InteractionResult.sidedSuccess(level.isClientSide());
+        return InteractionResult.SUCCESS;
     }
 }
