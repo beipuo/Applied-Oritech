@@ -20,11 +20,11 @@ import net.neoforged.neoforge.registries.DeferredItem;
 import net.neoforged.neoforge.registries.DeferredRegister;
 
 import com.java.beipuo.applied_oritech.block.MEDockBlock;
-import com.java.beipuo.applied_oritech.block.MEInterfaceUpgradeBlock;
-import com.java.beipuo.applied_oritech.block.MEPatternProviderUpgradeBlock;
+import com.java.beipuo.applied_oritech.block.MEInterfaceAddonBlock;
+import com.java.beipuo.applied_oritech.block.MEPatternProviderAddonBlock;
 import com.java.beipuo.applied_oritech.blockentity.MEDockBlockEntity;
-import com.java.beipuo.applied_oritech.blockentity.MEInterfaceUpgradeBlockEntity;
-import com.java.beipuo.applied_oritech.blockentity.MEPatternProviderUpgradeBlockEntity;
+import com.java.beipuo.applied_oritech.blockentity.MEInterfaceAddonBlockEntity;
+import com.java.beipuo.applied_oritech.blockentity.MEPatternProviderAddonBlockEntity;
 import com.java.beipuo.applied_oritech.item.AOAddonBlockItem;
 
 /** Every block, item, block entity type and creative tab this mod registers. */
@@ -43,12 +43,12 @@ public final class AOContent {
 
     public static final DeferredBlock<MEDockBlock> ME_DOCK_BLOCK =
             BLOCKS.registerBlock("me_dock", MEDockBlock::new, AOContent::machineAddonProperties);
-    public static final DeferredBlock<MEPatternProviderUpgradeBlock> ME_PATTERN_PROVIDER_UPGRADE_BLOCK =
+    public static final DeferredBlock<MEPatternProviderAddonBlock> ME_PATTERN_PROVIDER_UPGRADE_BLOCK =
             BLOCKS.registerBlock("me_pattern_provider_addon",
-                    MEPatternProviderUpgradeBlock::new, AOContent::machineAddonProperties);
-    public static final DeferredBlock<MEInterfaceUpgradeBlock> ME_INTERFACE_UPGRADE_BLOCK =
+                    MEPatternProviderAddonBlock::new, AOContent::machineAddonProperties);
+    public static final DeferredBlock<MEInterfaceAddonBlock> ME_INTERFACE_UPGRADE_BLOCK =
             BLOCKS.registerBlock("me_interface_addon",
-                    MEInterfaceUpgradeBlock::new, AOContent::machineAddonProperties);
+                    MEInterfaceAddonBlock::new, AOContent::machineAddonProperties);
 
     // ---- items ----------------------------------------------------------------------------
 
@@ -66,11 +66,11 @@ public final class AOContent {
 
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<MEDockBlockEntity>> ME_DOCK_ENTITY =
             blockEntity("me_dock", MEDockBlockEntity::new, ME_DOCK_BLOCK);
-    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<MEPatternProviderUpgradeBlockEntity>> ME_PATTERN_PROVIDER_UPGRADE_ENTITY =
-            blockEntity("me_pattern_provider_addon", MEPatternProviderUpgradeBlockEntity::new,
+    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<MEPatternProviderAddonBlockEntity>> ME_PATTERN_PROVIDER_UPGRADE_ENTITY =
+            blockEntity("me_pattern_provider_addon", MEPatternProviderAddonBlockEntity::new,
                     ME_PATTERN_PROVIDER_UPGRADE_BLOCK);
-    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<MEInterfaceUpgradeBlockEntity>> ME_INTERFACE_UPGRADE_ENTITY =
-            blockEntity("me_interface_addon", MEInterfaceUpgradeBlockEntity::new,
+    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<MEInterfaceAddonBlockEntity>> ME_INTERFACE_UPGRADE_ENTITY =
+            blockEntity("me_interface_addon", MEInterfaceAddonBlockEntity::new,
                     ME_INTERFACE_UPGRADE_BLOCK);
 
     // ---- creative tab ---------------------------------------------------------------------

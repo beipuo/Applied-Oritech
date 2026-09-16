@@ -4,9 +4,9 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 
-import com.java.beipuo.applied_oritech.block.MEPatternProviderUpgradeBlock;
+import com.java.beipuo.applied_oritech.block.MEPatternProviderAddonBlock;
 
-public class MEExtendedPatternProviderAddonBlock extends MEPatternProviderUpgradeBlock {
+public class MEExtendedPatternProviderAddonBlock extends MEPatternProviderAddonBlock {
     public MEExtendedPatternProviderAddonBlock(Properties settings) {
         super(settings);
     }

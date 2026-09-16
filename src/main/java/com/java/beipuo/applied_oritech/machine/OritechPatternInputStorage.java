@@ -12,14 +12,14 @@ import appeng.api.stacks.KeyCounter;
 import appeng.api.storage.MEStorage;
 
 import com.java.beipuo.applied_oritech.AOConfig;
-import com.java.beipuo.applied_oritech.blockentity.MEPatternProviderUpgradeBlockEntity;
+import com.java.beipuo.applied_oritech.blockentity.MEPatternProviderAddonBlockEntity;
 
 /** A cached AE2 capability must resolve attachment again before every operation. */
 public final class OritechPatternInputStorage implements MEStorage {
-    private final Supplier<MEPatternProviderUpgradeBlockEntity> provider;
+    private final Supplier<MEPatternProviderAddonBlockEntity> provider;
     private final Component description;
 
-    public OritechPatternInputStorage(Supplier<MEPatternProviderUpgradeBlockEntity> provider,
+    public OritechPatternInputStorage(Supplier<MEPatternProviderAddonBlockEntity> provider,
             Component description) {
         this.provider = provider;
         this.description = description;

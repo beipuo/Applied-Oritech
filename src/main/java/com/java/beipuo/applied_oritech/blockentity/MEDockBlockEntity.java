@@ -71,16 +71,16 @@ public class MEDockBlockEntity extends AOGridAddonBlockEntity implements IGridMu
     }
 
     /** Every upgrade addon on the same machine that has picked this dock. */
-    public List<MEUpgradeBlockEntity> findGroupUpgrades() {
+    public List<MEAddonBlockEntity> findGroupUpgrades() {
         var machine = getMachine();
         if (machine == null || level == null) return List.of();
 
         var candidates = new LinkedHashSet<BlockPos>(machine.getConnectedAddons());
         for (var direction : Direction.values()) candidates.add(worldPosition.relative(direction));
-        var result = new ArrayList<MEUpgradeBlockEntity>();
+        var result = new ArrayList<MEAddonBlockEntity>();
         for (var addonPos : candidates) {
             if (!level.hasChunkAt(addonPos)) continue;
-            if (level.getBlockEntity(addonPos) instanceof MEUpgradeBlockEntity upgrade
+            if (level.getBlockEntity(addonPos) instanceof MEAddonBlockEntity upgrade
                     && upgrade.getDock() == this) {
                 result.add(upgrade);
             }

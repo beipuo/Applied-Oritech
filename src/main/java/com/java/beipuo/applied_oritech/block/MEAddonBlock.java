@@ -29,13 +29,13 @@ import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
 
 
-import com.java.beipuo.applied_oritech.blockentity.MEUpgradeBlockEntity;
+import com.java.beipuo.applied_oritech.blockentity.MEAddonBlockEntity;
 
 /**
  * Shared block behaviour for the two upgrade modules: a server-side ticker, dropping the AE2 logic
  * contents on break, and refusing interaction until the module is actually usable.
  */
-public abstract class MEUpgradeBlock extends AOGridAddonBlock {
+public abstract class MEAddonBlock extends AOGridAddonBlock {
 
     public static final EnumProperty<Direction> ORIENTATION = BlockStateProperties.FACING;
     private static final Map<Direction, VoxelShape> SHAPES = createShapes();
@@ -65,7 +65,7 @@ public abstract class MEUpgradeBlock extends AOGridAddonBlock {
         };
     }
 
-    protected MEUpgradeBlock(Properties settings) {
+    protected MEAddonBlock(Properties settings) {
         super(settings.noOcclusion());
         registerDefaultState(defaultBlockState().setValue(ORIENTATION, Direction.UP));
     }
@@ -109,7 +109,7 @@ public abstract class MEUpgradeBlock extends AOGridAddonBlock {
             BlockEntityType<T> type) {
         if (level.isClientSide()) return null;
         return (tickLevel, pos, tickState, blockEntity) -> {
-            if (blockEntity instanceof MEUpgradeBlockEntity upgrade) upgrade.tickServer();
+            if (blockEntity instanceof MEAddonBlockEntity upgrade) upgrade.tickServer();
         };
     }
 
@@ -117,7 +117,7 @@ public abstract class MEUpgradeBlock extends AOGridAddonBlock {
     protected InteractionResult useWithoutItem(BlockState state, Level level, BlockPos pos, Player player,
             BlockHitResult hit) {
         if (level.isClientSide()) return InteractionResult.SUCCESS;
-        if (!(level.getBlockEntity(pos) instanceof MEUpgradeBlockEntity upgrade)) return InteractionResult.PASS;
+        if (!(level.getBlockEntity(pos) instanceof MEAddonBlockEntity upgrade)) return InteractionResult.PASS;
 
         if (!upgrade.isAttachedToMachine()) {
             player.sendOverlayMessage(
@@ -134,5 +134,5 @@ public abstract class MEUpgradeBlock extends AOGridAddonBlock {
     }
 
     /** Called only once the module is attached to a machine and has found a dock. */
-    protected abstract InteractionResult onUpgradeUsed(MEUpgradeBlockEntity upgrade, Player player);
+    protected abstract InteractionResult onUpgradeUsed(MEAddonBlockEntity upgrade, Player player);
 }

@@ -15,9 +15,9 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.block.state.BlockState;
 
-import com.java.beipuo.applied_oritech.blockentity.MEInterfaceUpgradeBlockEntity;
+import com.java.beipuo.applied_oritech.blockentity.MEInterfaceAddonBlockEntity;
 
-public class MEExtendedInterfaceAddonBlockEntity extends MEInterfaceUpgradeBlockEntity
+public class MEExtendedInterfaceAddonBlockEntity extends MEInterfaceAddonBlockEntity
         implements IPage, IGenericInvHost, IMEStorageAccess {
     private int page;
 

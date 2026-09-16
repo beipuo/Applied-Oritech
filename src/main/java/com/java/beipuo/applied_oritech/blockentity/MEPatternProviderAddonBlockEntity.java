@@ -43,7 +43,7 @@ import com.java.beipuo.applied_oritech.machine.OritechMachineLink;
  * sweeps the machine's result slots into the network itself. That behaviour is a toggle
  * ({@link #isAutoReturn()}): its default comes from config, and it can be flipped per block.
  */
-public class MEPatternProviderUpgradeBlockEntity extends MEUpgradeBlockEntity
+public class MEPatternProviderAddonBlockEntity extends MEAddonBlockEntity
         implements PatternProviderLogicHost {
 
     private final PatternProviderLogic logic;
@@ -52,14 +52,14 @@ public class MEPatternProviderUpgradeBlockEntity extends MEUpgradeBlockEntity
     private boolean autoReturn = AOConfig.autoReturnOutputsByDefault();
     private boolean patternsInitialised;
 
-    public MEPatternProviderUpgradeBlockEntity(BlockPos pos, BlockState state) {
+    public MEPatternProviderAddonBlockEntity(BlockPos pos, BlockState state) {
         this(AOContent.ME_PATTERN_PROVIDER_UPGRADE_ENTITY.get(), pos, state, 9);
     }
 
-    protected MEPatternProviderUpgradeBlockEntity(BlockEntityType<?> type, BlockPos pos, BlockState state, int slots) {
+    protected MEPatternProviderAddonBlockEntity(BlockEntityType<?> type, BlockPos pos, BlockState state, int slots) {
         super(type, pos, state);
         this.logic = new PatternProviderLogic(getMainNode(), this, slots);
-        // Must follow the logic construction — see MEUpgradeBlockEntity#applyGroupFlags.
+        // Must follow the logic construction — see MEAddonBlockEntity#applyGroupFlags.
         applyGroupFlags();
         getMainNode().setIdlePowerUsage(AOConfig.upgradeIdlePower());
     }

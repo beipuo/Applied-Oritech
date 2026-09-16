@@ -12,9 +12,9 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.block.state.BlockState;
 
-import com.java.beipuo.applied_oritech.blockentity.MEPatternProviderUpgradeBlockEntity;
+import com.java.beipuo.applied_oritech.blockentity.MEPatternProviderAddonBlockEntity;
 
-public class MEExtendedPatternProviderAddonBlockEntity extends MEPatternProviderUpgradeBlockEntity
+public class MEExtendedPatternProviderAddonBlockEntity extends MEPatternProviderAddonBlockEntity
         implements IGenericInvHost {
     public MEExtendedPatternProviderAddonBlockEntity(BlockPos pos, BlockState state) {
         super(ExtendedAEContent.PATTERN_PROVIDER_ENTITY.get(), pos, state, 36);

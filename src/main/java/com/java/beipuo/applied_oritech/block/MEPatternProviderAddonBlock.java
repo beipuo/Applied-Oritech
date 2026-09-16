@@ -16,8 +16,8 @@ import net.minecraft.world.level.block.Block;
 
 import appeng.menu.locator.MenuLocators;
 
-import com.java.beipuo.applied_oritech.blockentity.MEPatternProviderUpgradeBlockEntity;
-import com.java.beipuo.applied_oritech.blockentity.MEUpgradeBlockEntity;
+import com.java.beipuo.applied_oritech.blockentity.MEPatternProviderAddonBlockEntity;
+import com.java.beipuo.applied_oritech.blockentity.MEAddonBlockEntity;
 
 /**
  * The ME Pattern Provider Upgrade block.
@@ -26,35 +26,35 @@ import com.java.beipuo.applied_oritech.blockentity.MEUpgradeBlockEntity;
  * the output sweep — the switch that decides whether this module pulls the machine's results back
  * into the network, which autocrafting needs because Oritech machines never push results out.
  */
-public class MEPatternProviderUpgradeBlock extends MEUpgradeBlock {
+public class MEPatternProviderAddonBlock extends MEAddonBlock {
 
-    public MEPatternProviderUpgradeBlock(Properties settings) {
+    public MEPatternProviderAddonBlock(Properties settings) {
         super(settings);
     }
 
     @Override
     public @NotNull Class<? extends BlockEntity> getBlockEntityType() {
-        return MEPatternProviderUpgradeBlockEntity.class;
+        return MEPatternProviderAddonBlockEntity.class;
     }
 
     @Nullable
     @Override
     public BlockEntity newBlockEntity(BlockPos pos, BlockState state) {
-        return new MEPatternProviderUpgradeBlockEntity(pos, state);
+        return new MEPatternProviderAddonBlockEntity(pos, state);
     }
 
     @Override
     public void neighborChanged(BlockState state, Level level, BlockPos pos, Block block,
             @Nullable Orientation orientation, boolean isMoving) {
         super.neighborChanged(state, level, pos, block, orientation, isMoving);
-        if (!level.isClientSide() && level.getBlockEntity(pos) instanceof MEPatternProviderUpgradeBlockEntity provider) {
+        if (!level.isClientSide() && level.getBlockEntity(pos) instanceof MEPatternProviderAddonBlockEntity provider) {
             provider.getLogic().updateRedstoneState();
         }
     }
 
     @Override
-    protected InteractionResult onUpgradeUsed(MEUpgradeBlockEntity upgrade, Player player) {
-        if (!(upgrade instanceof MEPatternProviderUpgradeBlockEntity provider)) {
+    protected InteractionResult onUpgradeUsed(MEAddonBlockEntity upgrade, Player player) {
+        if (!(upgrade instanceof MEPatternProviderAddonBlockEntity provider)) {
             return InteractionResult.PASS;
         }
 

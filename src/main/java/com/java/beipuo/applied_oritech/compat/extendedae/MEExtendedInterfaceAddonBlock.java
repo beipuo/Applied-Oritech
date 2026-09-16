@@ -4,9 +4,9 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 
-import com.java.beipuo.applied_oritech.block.MEInterfaceUpgradeBlock;
+import com.java.beipuo.applied_oritech.block.MEInterfaceAddonBlock;
 
-public class MEExtendedInterfaceAddonBlock extends MEInterfaceUpgradeBlock {
+public class MEExtendedInterfaceAddonBlock extends MEInterfaceAddonBlock {
     public MEExtendedInterfaceAddonBlock(Properties settings) {
         super(settings);
     }

@@ -29,10 +29,10 @@ import rearth.oritech.util.MachineAddonController;
  * to us is what lets the dock's {@link IGridMultiblock} group absorb it, and therefore what keeps
  * upgrades from consuming channels of their own.
  */
-public abstract class MEUpgradeBlockEntity extends AOGridAddonBlockEntity implements IGridMultiblock {
+public abstract class MEAddonBlockEntity extends AOGridAddonBlockEntity implements IGridMultiblock {
 
 
-    protected MEUpgradeBlockEntity(BlockEntityType<?> type, BlockPos pos, BlockState state) {
+    protected MEAddonBlockEntity(BlockEntityType<?> type, BlockPos pos, BlockState state) {
         super(type, pos, state);
         getMainNode()
                 .setInWorldNode(false)

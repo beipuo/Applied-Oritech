@@ -16,7 +16,7 @@ import rearth.oritech.block.entity.MachineCoreEntity;
 import rearth.oritech.block.entity.addons.AddonBlockEntity;
 import rearth.oritech.util.MachineAddonController;
 
-import com.java.beipuo.applied_oritech.blockentity.MEPatternProviderUpgradeBlockEntity;
+import com.java.beipuo.applied_oritech.blockentity.MEPatternProviderAddonBlockEntity;
 import com.java.beipuo.applied_oritech.machine.OritechPatternInputStorage;
 import com.java.beipuo.applied_oritech.machine.OritechFluidStorage;
 import com.java.beipuo.applied_oritech.machine.OritechMachineMEStorage;
@@ -85,16 +85,16 @@ public final class AOCapabilities {
         var level = blockEntity.getLevel();
         var neighbourPos = blockEntity.getBlockPos().relative(side);
         if (level == null || !level.hasChunkAt(neighbourPos)
-                || !(level.getBlockEntity(neighbourPos) instanceof MEPatternProviderUpgradeBlockEntity)) return null;
+                || !(level.getBlockEntity(neighbourPos) instanceof MEPatternProviderAddonBlockEntity)) return null;
         var itemStorage = new OritechPatternInputStorage(() -> {
             if (blockEntity.isRemoved() || !level.hasChunkAt(neighbourPos)) return null;
-            if (!(level.getBlockEntity(neighbourPos) instanceof MEPatternProviderUpgradeBlockEntity upgrade)) return null;
+            if (!(level.getBlockEntity(neighbourPos) instanceof MEPatternProviderAddonBlockEntity upgrade)) return null;
             var controllerPos = resolveControllerPos(blockEntity);
             var machine = upgrade.getMachine();
             return controllerPos != null && machine != null
                     && controllerPos.equals(machine.getPosForAddon()) ? upgrade : null;
         }, blockEntity.getBlockState().getBlock().getName());
-        if (blockEntity instanceof com.java.beipuo.applied_oritech.blockentity.MEUpgradeBlockEntity upgrade
+        if (blockEntity instanceof com.java.beipuo.applied_oritech.blockentity.MEAddonBlockEntity upgrade
                 && upgrade.getMachineLink() != null && upgrade.getMachineLink().hasFluids()) {
             return new OritechMachineMEStorage(itemStorage,
                     new OritechFluidStorage(upgrade.getMachineLink().fluidStorage(),

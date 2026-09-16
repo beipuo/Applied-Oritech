@@ -44,20 +44,20 @@ import com.java.beipuo.applied_oritech.machine.OritechMachineStorage;
  * pull from their neighbours, so a passive interface would sit there full while the machine starved.
  * This upgrade therefore pushes its stocked buffer into the machine's input slots itself.
  */
-public class MEInterfaceUpgradeBlockEntity extends MEUpgradeBlockEntity
+public class MEInterfaceAddonBlockEntity extends MEAddonBlockEntity
         implements InterfaceLogicHost, ISegmentedInventory {
 
     private final InterfaceLogic logic;
     private final IActionSource actionSource = IActionSource.ofMachine(this);
 
-    public MEInterfaceUpgradeBlockEntity(BlockPos pos, BlockState state) {
+    public MEInterfaceAddonBlockEntity(BlockPos pos, BlockState state) {
         this(AOContent.ME_INTERFACE_UPGRADE_ENTITY.get(), pos, state, 9);
     }
 
-    protected MEInterfaceUpgradeBlockEntity(BlockEntityType<?> type, BlockPos pos, BlockState state, int slots) {
+    protected MEInterfaceAddonBlockEntity(BlockEntityType<?> type, BlockPos pos, BlockState state, int slots) {
         super(type, pos, state);
         this.logic = new InterfaceLogic(getMainNode(), this, state.getBlock().asItem(), slots);
-        // Must follow the logic construction — see MEUpgradeBlockEntity#applyGroupFlags.
+        // Must follow the logic construction — see MEAddonBlockEntity#applyGroupFlags.
         applyGroupFlags();
         getMainNode().setIdlePowerUsage(AOConfig.upgradeIdlePower());
     }

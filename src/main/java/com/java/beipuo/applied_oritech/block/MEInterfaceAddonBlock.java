@@ -11,33 +11,33 @@ import net.minecraft.world.level.block.state.BlockState;
 
 import appeng.menu.locator.MenuLocators;
 
-import com.java.beipuo.applied_oritech.blockentity.MEInterfaceUpgradeBlockEntity;
-import com.java.beipuo.applied_oritech.blockentity.MEUpgradeBlockEntity;
+import com.java.beipuo.applied_oritech.blockentity.MEInterfaceAddonBlockEntity;
+import com.java.beipuo.applied_oritech.blockentity.MEAddonBlockEntity;
 
 /**
  * The ME Interface Upgrade block. Right-click opens AE2's own interface menu, where the stock list
  * and upgrade cards are configured.
  */
-public class MEInterfaceUpgradeBlock extends MEUpgradeBlock {
+public class MEInterfaceAddonBlock extends MEAddonBlock {
 
-    public MEInterfaceUpgradeBlock(Properties settings) {
+    public MEInterfaceAddonBlock(Properties settings) {
         super(settings);
     }
 
     @Override
     public @NotNull Class<? extends BlockEntity> getBlockEntityType() {
-        return MEInterfaceUpgradeBlockEntity.class;
+        return MEInterfaceAddonBlockEntity.class;
     }
 
     @Nullable
     @Override
     public BlockEntity newBlockEntity(BlockPos pos, BlockState state) {
-        return new MEInterfaceUpgradeBlockEntity(pos, state);
+        return new MEInterfaceAddonBlockEntity(pos, state);
     }
 
     @Override
-    protected InteractionResult onUpgradeUsed(MEUpgradeBlockEntity upgrade, Player player) {
-        if (!(upgrade instanceof MEInterfaceUpgradeBlockEntity iface)) return InteractionResult.PASS;
+    protected InteractionResult onUpgradeUsed(MEAddonBlockEntity upgrade, Player player) {
+        if (!(upgrade instanceof MEInterfaceAddonBlockEntity iface)) return InteractionResult.PASS;
 
         iface.openMenu(player, MenuLocators.forBlockEntity(iface));
         return InteractionResult.CONSUME;
