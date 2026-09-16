@@ -10,6 +10,7 @@ import org.jetbrains.annotations.Nullable;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 
 import appeng.api.networking.GridFlags;
@@ -20,6 +21,7 @@ import rearth.oritech.util.MachineAddonController;
 
 import com.java.beipuo.applied_oritech.AOConfig;
 import com.java.beipuo.applied_oritech.AOContent;
+import com.java.beipuo.applied_oritech.block.MEDockBlock;
 
 /**
  * The ME Dock: the single point where an Oritech machine meets an ME network.
@@ -121,6 +123,17 @@ public class MEDockBlockEntity extends AOGridAddonBlockEntity implements IGridMu
         var currentDistance = current.distSqr(from);
         if (candidateDistance != currentDistance) return candidateDistance < currentDistance;
         return candidate.compareTo(current) < 0;
+    }
+
+    public void tickServer() {
+        if (level == null || level.isClientSide() || isRemoved()) return;
+        var node = getMainNode().getNode();
+        // AE2's visual status checks power and channels without flickering during grid boot.
+        var online = getMachine() != null && node != null && node.isOnline();
+        var state = getBlockState();
+        if (state.getValue(MEDockBlock.ONLINE) != online) {
+            level.setBlock(worldPosition, state.setValue(MEDockBlock.ONLINE, online), Block.UPDATE_CLIENTS);
+        }
     }
 
     /** True when the dock has a channel and the network is powered. */

@@ -4,8 +4,13 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import net.minecraft.core.BlockPos;
+import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.entity.BlockEntityTicker;
+import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.state.StateDefinition;
+import net.minecraft.world.level.block.state.properties.BooleanProperty;
 
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
@@ -23,9 +28,27 @@ import com.java.beipuo.applied_oritech.blockentity.MEDockBlockEntity;
  * faces to connect from.
  */
 public class MEDockBlock extends AOGridAddonBlock {
+    public static final BooleanProperty ONLINE = BooleanProperty.create("online");
 
     public MEDockBlock(Properties settings) {
         super(settings);
+        registerDefaultState(defaultBlockState().setValue(ONLINE, false));
+    }
+
+    @Override
+    protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> builder) {
+        super.createBlockStateDefinition(builder);
+        builder.add(ONLINE);
+    }
+
+    @Nullable
+    @Override
+    public <T extends BlockEntity> BlockEntityTicker<T> getTicker(Level level, BlockState state,
+            BlockEntityType<T> type) {
+        if (level.isClientSide()) return null;
+        return (tickLevel, pos, tickState, blockEntity) -> {
+            if (blockEntity instanceof MEDockBlockEntity dock) dock.tickServer();
+        };
     }
 
     /** Oritech consults this reflectively; overriding {@link #newBlockEntity} makes it unused. */
