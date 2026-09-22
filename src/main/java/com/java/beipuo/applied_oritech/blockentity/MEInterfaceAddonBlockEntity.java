@@ -26,23 +26,26 @@ import appeng.helpers.InterfaceLogic;
 import appeng.helpers.InterfaceLogicHost;
 import appeng.core.definitions.AEItems;
 import appeng.api.stacks.GenericStack;
+import appeng.api.storage.MEStorage;
 
 import com.java.beipuo.applied_oritech.AOConfig;
 import com.java.beipuo.applied_oritech.AOContent;
+import com.java.beipuo.applied_oritech.machine.OritechFluidStorage;
+import com.java.beipuo.applied_oritech.machine.OritechMachineMEStorage;
 import com.java.beipuo.applied_oritech.machine.OritechMachineStorage;
 
 /**
- * ME Interface Upgrade: keeps a configured set of items stocked in the attached Oritech machine's
- * input slots, and can request crafts from the network to refill them.
+ * ME Interface Upgrade: keeps a configured set of resources stocked in the attached Oritech machine's
+ * input slots or fluid tank, and can request crafts from the network to refill them.
  *
  * <p>Backed by a real {@link InterfaceLogic}, so the configuration UI, fuzzy/crafting upgrade
  * cards, priority and crafting requests all work as on AE2's own interface.
  *
- * <p>One behaviour is inverted relative to AE2. A stock ME Interface is passive: it stocks items
+ * <p>One behaviour is inverted relative to AE2. A stock ME Interface is passive: it stocks resources
  * into an internal buffer and publishes that buffer as an {@code ME_STORAGE} capability for an
  * adjacent machine to pull from (see AE2's {@code InitCapabilityProviders}). Oritech machines never
  * pull from their neighbours, so a passive interface would sit there full while the machine starved.
- * This upgrade therefore pushes its stocked buffer into the machine's input slots itself.
+ * This upgrade therefore pushes its stocked buffer into the machine's input slots or fluid tank itself.
  */
 public class MEInterfaceAddonBlockEntity extends MEAddonBlockEntity
         implements InterfaceLogicHost, ISegmentedInventory {
@@ -110,10 +113,14 @@ public class MEInterfaceAddonBlockEntity extends MEAddonBlockEntity
         if (!isNetworkOnline()) return;
 
         var link = getMachineLink();
-        if (link == null || !link.hasInputs()) return;
+        if (link == null || (!link.hasInputs() && !link.hasFluids())) return;
 
         var stocked = logic.getStorage();
-        var machine = new OritechMachineStorage(link, machineName());
+        MEStorage machine = new OritechMachineStorage(link, machineName());
+        if (link.hasFluids()) {
+            machine = new OritechMachineMEStorage(machine,
+                    new OritechFluidStorage(link.fluidStorage(), machineName()));
+        }
         for (int slot = 0; slot < stocked.size(); slot++) {
             var entry = stocked.getStack(slot);
             var configured = logic.getConfig().getStack(slot);

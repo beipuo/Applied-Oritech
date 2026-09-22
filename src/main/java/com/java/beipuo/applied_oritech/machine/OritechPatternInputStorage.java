@@ -32,7 +32,14 @@ public final class OritechPatternInputStorage implements MEStorage {
         if (upgrade == null || !upgrade.isNetworkOnline() || !upgrade.hasMachineEnergy(cost)) return 0;
         var link = upgrade.getMachineLink();
         if (link == null) return 0;
-        var storage = new OritechMachineStorage(link, description);
+        MEStorage storage;
+        if (what instanceof AEItemKey) {
+            storage = new OritechMachineStorage(link, description);
+        } else if (what instanceof appeng.api.stacks.AEFluidKey && link.hasFluids()) {
+            storage = new OritechFluidStorage(link.fluidStorage(), description);
+        } else {
+            return 0;
+        }
         var accepted = storage.insert(what, amount, Actionable.SIMULATE, source);
         if (mode == Actionable.SIMULATE || accepted <= 0) return accepted;
         if (!upgrade.spendMachineEnergy(cost)) return 0;
@@ -49,6 +56,9 @@ public final class OritechPatternInputStorage implements MEStorage {
         for (var slot : link.inputSlots()) {
             var stack = link.stackInSlot(slot);
             if (!stack.isEmpty()) out.add(AEItemKey.of(stack), stack.getCount());
+        }
+        if (link.hasFluids()) {
+            new OritechFluidStorage(link.fluidStorage(), description).getAvailableStacks(out);
         }
     }
 

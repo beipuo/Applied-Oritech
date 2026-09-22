@@ -86,21 +86,24 @@ public final class AOCapabilities {
         var neighbourPos = blockEntity.getBlockPos().relative(side);
         if (level == null || !level.hasChunkAt(neighbourPos)
                 || !(level.getBlockEntity(neighbourPos) instanceof MEPatternProviderAddonBlockEntity)) return null;
-        var itemStorage = new OritechPatternInputStorage(() -> {
+        java.util.function.Supplier<MEPatternProviderAddonBlockEntity> provider = () -> {
             if (blockEntity.isRemoved() || !level.hasChunkAt(neighbourPos)) return null;
             if (!(level.getBlockEntity(neighbourPos) instanceof MEPatternProviderAddonBlockEntity upgrade)) return null;
             var controllerPos = resolveControllerPos(blockEntity);
             var machine = upgrade.getMachine();
             return controllerPos != null && machine != null
                     && controllerPos.equals(machine.getPosForAddon()) ? upgrade : null;
-        }, blockEntity.getBlockState().getBlock().getName());
-        if (blockEntity instanceof com.java.beipuo.applied_oritech.blockentity.MEAddonBlockEntity upgrade
-                && upgrade.getMachineLink() != null && upgrade.getMachineLink().hasFluids()) {
-            return new OritechMachineMEStorage(itemStorage,
-                    new OritechFluidStorage(upgrade.getMachineLink().fluidStorage(),
-                            blockEntity.getBlockState().getBlock().getName()));
+        };
+        var upgrade = provider.get();
+        if (upgrade == null) return null;
+        var description = blockEntity.getBlockState().getBlock().getName();
+        var inputStorage = new OritechPatternInputStorage(provider, description);
+        var link = upgrade.getMachineLink();
+        if (link != null && link.hasFluids()) {
+            return new OritechMachineMEStorage(inputStorage,
+                    new OritechFluidStorage(link.fluidStorage(), description));
         }
-        return itemStorage;
+        return inputStorage;
     }
 
     /**

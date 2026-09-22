@@ -8,6 +8,7 @@ import net.minecraft.core.Direction;
 import net.minecraft.world.level.storage.ValueInput;
 import net.minecraft.world.level.storage.ValueOutput;
 import net.neoforged.neoforge.transfer.item.ItemResource;
+import net.neoforged.neoforge.transfer.fluid.FluidResource;
 import net.neoforged.neoforge.transfer.transaction.Transaction;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.entity.BlockEntity;
@@ -17,6 +18,7 @@ import net.minecraft.world.level.block.state.BlockState;
 import appeng.api.config.Actionable;
 import appeng.api.networking.IGridNodeListener;
 import appeng.api.networking.security.IActionSource;
+import appeng.api.stacks.AEFluidKey;
 import appeng.api.stacks.AEItemKey;
 import appeng.helpers.patternprovider.PatternProviderLogic;
 import appeng.helpers.patternprovider.PatternProviderLogicHost;
@@ -135,7 +137,7 @@ public class MEPatternProviderAddonBlockEntity extends MEAddonBlockEntity
         if (!autoReturn || !isNetworkOnline()) return;
 
         var link = getMachineLink();
-        if (link == null || !link.hasOutputs()) return;
+        if (link == null) return;
         var returns = logic.getReturnInv();
         var inventory = link.inventory();
 
@@ -161,6 +163,42 @@ public class MEPatternProviderAddonBlockEntity extends MEAddonBlockEntity
             var stored = returns.insert(key, taken, Actionable.MODULATE, actionSource);
             if (stored < taken) {
                 inventory.set(slot, ItemResource.of(stack), stack.getCount() - (int) stored);
+            }
+        }
+
+        var fluids = link.fluidStorage();
+        if (fluids == null) return;
+        for (var slot = 0; slot < fluids.size(); slot++) {
+            FluidResource resource = fluids.getResource(slot);
+            if (resource.isEmpty()) continue;
+            var key = AEFluidKey.of(resource.toStack(1));
+            if (key == null) continue;
+
+            var available = Math.min(fluids.getAmountAsLong(slot), Integer.MAX_VALUE);
+            var accepted = returns.insert(key, available, Actionable.SIMULATE, actionSource);
+            if (accepted <= 0) continue;
+            var cost = AOConfig.rfPerTransfer();
+            if (!hasMachineEnergy(cost)) break;
+
+            int extractable;
+            try (var transaction = Transaction.openRoot()) {
+                extractable = fluids.extract(slot, resource, (int) accepted, transaction);
+            }
+            if (extractable <= 0) continue;
+
+            try (var transaction = Transaction.openRoot()) {
+                returns.updateSnapshots(transaction);
+                returns.beginBatch();
+                try {
+                    var stored = returns.insert(key, extractable, Actionable.MODULATE, actionSource);
+                    if (stored <= 0) continue;
+                    var taken = fluids.extract(slot, resource, (int) stored, transaction);
+                    if (taken != stored) continue;
+                    if (!spendMachineEnergy(cost)) break;
+                } finally {
+                    returns.endBatchSuppressed();
+                }
+                transaction.commit();
             }
         }
     }
