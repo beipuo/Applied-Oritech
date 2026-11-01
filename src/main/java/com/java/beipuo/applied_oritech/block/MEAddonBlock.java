@@ -43,25 +43,29 @@ public abstract class MEAddonBlock extends AOGridAddonBlock {
     private static Map<Direction, VoxelShape> createShapes() {
         var shapes = new EnumMap<Direction, VoxelShape>(Direction.class);
         for (var direction : Direction.values()) {
-            // The four square layers match me_interface_addon, inherited by the provider model.
             shapes.put(direction, Shapes.or(
-                    layer(direction, 2, 2, 4),
-                    layer(direction, 3, 0, 1),
-                    layer(direction, 5, 1, 2),
-                    layer(direction, 5, 4, 6)).optimize());
+                    orientedBox(direction, 4, 0, 4, 12, 1, 12),
+                    orientedBox(direction, 4, 1, 6, 6, 4, 10),
+                    orientedBox(direction, 10, 1, 6, 12, 3, 10),
+                    orientedBox(direction, 2, 3, 2, 14, 5, 14),
+                    orientedBox(direction, 3, 5, 3, 13, 6, 13),
+                    orientedBox(direction, 1, 3, 4, 3, 8, 12),
+                    orientedBox(direction, 13, 3, 4, 15, 8, 12),
+                    orientedBox(direction, 5, 3, 1, 11, 6, 3),
+                    orientedBox(direction, 5, 3, 13, 11, 6, 15)).optimize());
         }
         return Map.copyOf(shapes);
     }
 
-    private static VoxelShape layer(Direction direction, double inset, double bottom, double top) {
-        double edge = 16 - inset;
+    private static VoxelShape orientedBox(Direction direction, double x1, double y1, double z1,
+            double x2, double y2, double z2) {
         return switch (direction) {
-            case UP -> Block.box(inset, bottom, inset, edge, top, edge);
-            case DOWN -> Block.box(inset, 16 - top, inset, edge, 16 - bottom, edge);
-            case NORTH -> Block.box(inset, inset, 16 - top, edge, edge, 16 - bottom);
-            case SOUTH -> Block.box(inset, inset, bottom, edge, edge, top);
-            case EAST -> Block.box(bottom, inset, inset, top, edge, edge);
-            case WEST -> Block.box(16 - top, inset, inset, 16 - bottom, edge, edge);
+            case UP -> Block.box(x1, y1, z1, x2, y2, z2);
+            case DOWN -> Block.box(x1, 16 - y2, 16 - z2, x2, 16 - y1, 16 - z1);
+            case NORTH -> Block.box(x1, z1, 16 - y2, x2, z2, 16 - y1);
+            case SOUTH -> Block.box(16 - x2, z1, y1, 16 - x1, z2, y2);
+            case EAST -> Block.box(y1, z1, x1, y2, z2, x2);
+            case WEST -> Block.box(16 - y2, z1, 16 - x2, 16 - y1, z2, 16 - x1);
         };
     }
 
