@@ -31,7 +31,7 @@ public class MEDockBlock extends AOGridAddonBlock {
     public static final BooleanProperty ONLINE = BooleanProperty.create("online");
 
     public MEDockBlock(Properties settings) {
-        super(settings);
+        super(settings, AddonSettings.getDefaultSettings().withExtender(true).withNeedsSupport(false));
         registerDefaultState(defaultBlockState().setValue(ONLINE, false));
     }
 

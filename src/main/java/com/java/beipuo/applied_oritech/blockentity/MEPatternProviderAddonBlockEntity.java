@@ -46,7 +46,7 @@ import com.java.beipuo.applied_oritech.machine.OritechMachineLink;
  * ({@link #isAutoReturn()}): its default comes from config, and it can be flipped per block.
  */
 public class MEPatternProviderAddonBlockEntity extends MEAddonBlockEntity
-        implements PatternProviderLogicHost {
+        implements PatternProviderLogicHost, net.minecraft.world.Nameable {
 
     private final PatternProviderLogic logic;
     private final IActionSource actionSource = IActionSource.ofMachine(this);
@@ -203,6 +203,58 @@ public class MEPatternProviderAddonBlockEntity extends MEAddonBlockEntity
         }
     }
 
+    @org.jetbrains.annotations.Nullable
+    private net.minecraft.network.chat.Component customName;
+
+    @Override
+    public net.minecraft.network.chat.Component getName() {
+        if (customName != null) return customName;
+        var machine = getMachine();
+        if (machine instanceof net.minecraft.world.Nameable nameable) return nameable.getName();
+        if (machine != null && level != null) {
+            return level.getBlockState(machine.getPosForAddon()).getBlock().getName();
+        }
+        return getBlockState().getBlock().getName();
+    }
+
+    @Override
+    @org.jetbrains.annotations.Nullable
+    public net.minecraft.network.chat.Component getCustomName() {
+        return customName;
+    }
+
+    public void setCustomName(@org.jetbrains.annotations.Nullable net.minecraft.network.chat.Component name) {
+        customName = name;
+        setChanged();
+        if (level != null && !level.isClientSide()) {
+            level.sendBlockUpdated(worldPosition, getBlockState(), getBlockState(),
+                    net.minecraft.world.level.block.Block.UPDATE_CLIENTS);
+        }
+    }
+
+    @Override
+    public appeng.api.implementations.blockentities.PatternContainerGroup getTerminalGroup() {
+        var machine = getMachine();
+        var icon = customName == null && machine != null && level != null
+                ? AEItemKey.of(level.getBlockState(machine.getPosForAddon()).getBlock()) : getTerminalIcon();
+        return new appeng.api.implementations.blockentities.PatternContainerGroup(icon, getName(), List.of());
+    }
+
+    @Override
+    public net.minecraft.nbt.CompoundTag getUpdateTag(net.minecraft.core.HolderLookup.Provider registries) {
+        var output = net.minecraft.world.level.storage.TagValueOutput.createWithContext(
+                net.minecraft.util.ProblemReporter.DISCARDING, registries);
+        if (customName != null) {
+            output.store("CustomName", net.minecraft.network.chat.ComponentSerialization.CODEC, customName);
+        }
+        return output.buildResult();
+    }
+
+    @Override
+    public net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket getUpdatePacket() {
+        return net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket.create(this);
+    }
+
     // ---- persistence ----------------------------------------------------------------------
 
     @Override
@@ -210,6 +262,9 @@ public class MEPatternProviderAddonBlockEntity extends MEAddonBlockEntity
         super.saveAdditional(output);
         logic.writeToNBT(output);
         output.putBoolean("auto_return", autoReturn);
+        if (customName != null) {
+            output.store("CustomName", net.minecraft.network.chat.ComponentSerialization.CODEC, customName);
+        }
     }
 
     @Override
@@ -217,6 +272,7 @@ public class MEPatternProviderAddonBlockEntity extends MEAddonBlockEntity
         super.loadAdditional(input);
         logic.readFromNBT(input);
         autoReturn = input.getBooleanOr("auto_return", AOConfig.autoReturnOutputsByDefault());
+        customName = input.read("CustomName", net.minecraft.network.chat.ComponentSerialization.CODEC).orElse(null);
     }
 
     /** Encoded patterns and anything left in the return inventory must not be destroyed. */

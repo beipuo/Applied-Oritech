@@ -113,7 +113,9 @@ public class MEInterfaceAddonBlockEntity extends MEAddonBlockEntity
         if (!isNetworkOnline()) return;
 
         var link = getMachineLink();
-        if (link == null || (!link.hasInputs() && !link.hasFluids())) return;
+        if (link == null) return;
+        if (autoReturn) returnOutputs(link);
+        if (!link.hasInputs() && !link.hasFluids()) return;
 
         var stocked = logic.getStorage();
         MEStorage machine = new OritechMachineStorage(link, machineName());
@@ -150,6 +152,49 @@ public class MEInterfaceAddonBlockEntity extends MEAddonBlockEntity
         }
     }
 
+    private boolean autoReturn = AOConfig.autoReturnOutputsByDefault();
+
+    public boolean isAutoReturn() {
+        return autoReturn;
+    }
+
+    public boolean toggleAutoReturn() {
+        autoReturn = !autoReturn;
+        setChanged();
+        return autoReturn;
+    }
+
+    private void returnOutputs(com.java.beipuo.applied_oritech.machine.OritechMachineLink link) {
+        var grid = getMainNode().getGrid();
+        if (grid == null) return;
+        var storage = grid.getStorageService().getInventory();
+        var energy = grid.getEnergyService();
+        var inventory = link.inventory();
+        for (var slot : link.outputSlots()) {
+            var stack = link.stackInSlot(slot);
+            if (stack.isEmpty()) continue;
+            var key = appeng.api.stacks.AEItemKey.of(stack);
+            var accepted = appeng.api.storage.StorageHelper.poweredInsert(energy, storage, key,
+                    stack.getCount(), actionSource, Actionable.SIMULATE);
+            if (accepted <= 0) continue;
+            if (!hasMachineEnergy(AOConfig.rfPerTransfer())) break;
+            int taken;
+            try (var transaction = net.neoforged.neoforge.transfer.transaction.Transaction.openRoot()) {
+                taken = inventory.extract(slot, net.neoforged.neoforge.transfer.item.ItemResource.of(stack),
+                        (int) accepted, transaction);
+                transaction.commit();
+            }
+            if (taken <= 0) continue;
+            var stored = appeng.api.storage.StorageHelper.poweredInsert(energy, storage, key,
+                    taken, actionSource, Actionable.MODULATE);
+            if (stored < taken) {
+                inventory.set(slot, net.neoforged.neoforge.transfer.item.ItemResource.of(stack),
+                        stack.getCount() - (int) stored);
+            }
+            if (stored > 0) spendMachineEnergy(AOConfig.rfPerTransfer());
+        }
+    }
+
     private Component machineName() {
         return getBlockState().getBlock().getName();
     }
@@ -160,12 +205,14 @@ public class MEInterfaceAddonBlockEntity extends MEAddonBlockEntity
     protected void saveAdditional(ValueOutput output) {
         super.saveAdditional(output);
         logic.writeToNBT(output);
+        output.putBoolean("auto_return", autoReturn);
     }
 
     @Override
     protected void loadAdditional(ValueInput input) {
         super.loadAdditional(input);
         logic.readFromNBT(input);
+        autoReturn = input.getBooleanOr("auto_return", AOConfig.autoReturnOutputsByDefault());
     }
 
     /** Stocked items and installed upgrade cards must survive breaking the block. */

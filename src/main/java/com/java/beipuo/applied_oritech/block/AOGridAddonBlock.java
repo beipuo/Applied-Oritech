@@ -22,7 +22,11 @@ import com.java.beipuo.applied_oritech.blockentity.AOGridAddonBlockEntity;
 
 public abstract class AOGridAddonBlock extends MachineAddonBlock {
     protected AOGridAddonBlock(Properties settings) {
-        super(settings, AddonSettings.getDefaultSettings().withNeedsSupport(false));
+        this(settings, AddonSettings.getDefaultSettings().withNeedsSupport(false));
+    }
+
+    protected AOGridAddonBlock(Properties settings, AddonSettings addonSettings) {
+        super(settings, addonSettings);
     }
 
     @Override
