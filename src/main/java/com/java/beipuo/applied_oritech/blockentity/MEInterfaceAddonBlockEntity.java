@@ -32,17 +32,10 @@ import com.java.beipuo.applied_oritech.AOContent;
 import com.java.beipuo.applied_oritech.machine.OritechMachineStorage;
 
 /**
- * ME Interface Upgrade: keeps a configured set of items stocked in the attached Oritech machine's
- * input slots, and can request crafts from the network to refill them.
- *
- * <p>Backed by a real {@link InterfaceLogic}, so the configuration UI, fuzzy/crafting upgrade
- * cards, priority and crafting requests all work as on AE2's own interface.
- *
- * <p>One behaviour is inverted relative to AE2. A stock ME Interface is passive: it stocks items
- * into an internal buffer and publishes that buffer as an {@code ME_STORAGE} capability for an
- * adjacent machine to pull from (see AE2's {@code InitCapabilityProviders}). Oritech machines never
- * pull from their neighbours, so a passive interface would sit there full while the machine starved.
- * This upgrade therefore pushes its stocked buffer into the machine's input slots itself.
+ * ME Interface Upgrade: keeps configured items and fluids stocked in the attached Oritech machine.
+ * Backed by {@link InterfaceLogic} for configuration, upgrade cards and crafting requests.
+ * Oritech machines do not pull from interfaces, so this addon pushes the buffer into the machine
+ * and optionally returns machine outputs to the network.
  */
 public class MEInterfaceAddonBlockEntity extends MEAddonBlockEntity
         implements InterfaceLogicHost, ISegmentedInventory {
@@ -110,10 +103,16 @@ public class MEInterfaceAddonBlockEntity extends MEAddonBlockEntity
         if (!isNetworkOnline()) return;
 
         var link = getMachineLink();
-        if (link == null || !link.hasInputs()) return;
+        if (link == null) return;
+        if (autoReturn) returnOutputs(link);
+        if (!link.hasInputs() && !link.hasFluids()) return;
 
         var stocked = logic.getStorage();
-        var machine = new OritechMachineStorage(link, machineName());
+        appeng.api.storage.MEStorage machine = new OritechMachineStorage(link, machineName());
+        if (link.hasFluids()) {
+            machine = new com.java.beipuo.applied_oritech.machine.OritechMachineMEStorage(machine,
+                    new com.java.beipuo.applied_oritech.machine.OritechFluidStorage(link.fluidStorage(), machineName()));
+        }
         for (int slot = 0; slot < stocked.size(); slot++) {
             var entry = stocked.getStack(slot);
             var configured = logic.getConfig().getStack(slot);
@@ -143,22 +142,44 @@ public class MEInterfaceAddonBlockEntity extends MEAddonBlockEntity
         }
     }
 
+    private boolean autoReturn = AOConfig.autoReturnOutputsByDefault();
+
+    public boolean isAutoReturn() {
+        return autoReturn;
+    }
+
+    public boolean toggleAutoReturn() {
+        autoReturn = !autoReturn;
+        setChanged();
+        return autoReturn;
+    }
+
+    private void returnOutputs(com.java.beipuo.applied_oritech.machine.OritechMachineLink link) {
+        var grid = getMainNode().getGrid();
+        if (grid == null) return;
+        com.java.beipuo.applied_oritech.machine.OritechOutputTransfer.sweep(link,
+                (key, amount, mode) -> appeng.api.storage.StorageHelper.poweredInsert(
+                        grid.getEnergyService(), grid.getStorageService().getInventory(), key, amount, actionSource, mode),
+                () -> hasMachineEnergy(AOConfig.rfPerTransfer()),
+                () -> spendMachineEnergy(AOConfig.rfPerTransfer()));
+    }
+
     private Component machineName() {
         return getBlockState().getBlock().getName();
     }
-
-    // ---- persistence ----------------------------------------------------------------------
 
     @Override
     protected void saveAdditional(CompoundTag nbt, HolderLookup.Provider registries) {
         super.saveAdditional(nbt, registries);
         logic.writeToNBT(nbt, registries);
+        nbt.putBoolean("auto_return", autoReturn);
     }
 
     @Override
     protected void loadAdditional(CompoundTag nbt, HolderLookup.Provider registries) {
         super.loadAdditional(nbt, registries);
         logic.readFromNBT(nbt, registries);
+        autoReturn = nbt.contains("auto_return") ? nbt.getBoolean("auto_return") : AOConfig.autoReturnOutputsByDefault();
     }
 
     /** Stocked items and installed upgrade cards must survive breaking the block. */

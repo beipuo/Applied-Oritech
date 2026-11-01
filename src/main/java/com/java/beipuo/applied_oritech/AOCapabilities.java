@@ -18,8 +18,7 @@ import rearth.oritech.util.MachineAddonController;
 
 import com.java.beipuo.applied_oritech.blockentity.MEPatternProviderUpgradeBlockEntity;
 import com.java.beipuo.applied_oritech.machine.OritechPatternInputStorage;
-import com.java.beipuo.applied_oritech.machine.OritechFluidStorage;
-import com.java.beipuo.applied_oritech.machine.OritechMachineMEStorage;
+
 
 /**
  * Capability wiring. This is where the bridge is actually made.
@@ -86,7 +85,7 @@ public final class AOCapabilities {
         var neighbourPos = blockEntity.getBlockPos().relative(side);
         if (level == null || !level.hasChunkAt(neighbourPos)
                 || !(level.getBlockEntity(neighbourPos) instanceof MEPatternProviderUpgradeBlockEntity)) return null;
-        var itemStorage = new OritechPatternInputStorage(() -> {
+        return new OritechPatternInputStorage(() -> {
             if (blockEntity.isRemoved() || !level.hasChunkAt(neighbourPos)) return null;
             if (!(level.getBlockEntity(neighbourPos) instanceof MEPatternProviderUpgradeBlockEntity upgrade)) return null;
             var controllerPos = resolveControllerPos(blockEntity);
@@ -94,13 +93,6 @@ public final class AOCapabilities {
             return controllerPos != null && machine != null
                     && controllerPos.equals(machine.getPosForAddon()) ? upgrade : null;
         }, blockEntity.getBlockState().getBlock().getName());
-        if (blockEntity instanceof com.java.beipuo.applied_oritech.blockentity.MEUpgradeBlockEntity upgrade
-                && upgrade.getMachineLink() != null && upgrade.getMachineLink().hasFluids()) {
-            return new OritechMachineMEStorage(itemStorage,
-                    new OritechFluidStorage(upgrade.getMachineLink().fluidStorage(),
-                            blockEntity.getBlockState().getBlock().getName()));
-        }
-        return itemStorage;
     }
 
     /**

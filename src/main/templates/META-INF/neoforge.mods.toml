@@ -77,14 +77,14 @@ side = "BOTH"
 [[dependencies."${mod_id}"]]
 modId = "oritech"
 type = "required"
-versionRange = "[1.2.12,)"
+versionRange = "[1.2.13,)"
 ordering = "AFTER"
 side = "BOTH"
 
 [[dependencies."${mod_id}"]]
 modId = "ae2"
 type = "required"
-versionRange = "[19.2.0,)"
+versionRange = "[19.2.18,)"
 ordering = "AFTER"
 side = "BOTH"
 

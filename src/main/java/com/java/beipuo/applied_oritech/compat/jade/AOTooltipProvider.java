@@ -21,8 +21,13 @@ public final class AOTooltipProvider implements TooltipProvider {
     private static final ResourceLocation PATTERN_PROVIDER =
             ResourceLocation.fromNamespaceAndPath(Applied_oritech.MODID, "pattern_provider");
 
+    private static final ResourceLocation AUTO_RETURN =
+            ResourceLocation.fromNamespaceAndPath(Applied_oritech.MODID, "auto_return");
+
     @Override
     public void registerCommon(CommonRegistration registration) {
+        registration.addBlockEntityData(AUTO_RETURN,
+                com.java.beipuo.applied_oritech.blockentity.MEAddonBlockEntity.class, new AutoReturnDataProvider());
         registration.addBlockEntityData(GRID_NODE_STATE,
                 AOGridAddonBlockEntity.class, new GridNodeStateDataProvider());
         registration.addBlockEntityData(PATTERN_PROVIDER,
@@ -31,6 +36,8 @@ public final class AOTooltipProvider implements TooltipProvider {
 
     @Override
     public void registerClient(ClientRegistration registration) {
+        registration.addBlockEntityBody(com.java.beipuo.applied_oritech.blockentity.MEAddonBlockEntity.class,
+                com.java.beipuo.applied_oritech.block.MEAddonBlock.class, AUTO_RETURN, new AutoReturnDataProvider());
         registration.addBlockEntityBody(AOGridAddonBlockEntity.class,
                 AOGridAddonBlock.class, GRID_NODE_STATE, new GridNodeStateDataProvider());
         registration.addBlockEntityBody(MEPatternProviderAddonBlockEntity.class,

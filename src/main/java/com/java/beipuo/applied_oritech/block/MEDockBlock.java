@@ -23,9 +23,29 @@ import com.java.beipuo.applied_oritech.blockentity.MEDockBlockEntity;
  * faces to connect from.
  */
 public class MEDockBlock extends AOGridAddonBlock {
+    public static final net.minecraft.world.level.block.state.properties.BooleanProperty ONLINE =
+            net.minecraft.world.level.block.state.properties.BooleanProperty.create("online");
 
     public MEDockBlock(Properties settings) {
-        super(settings);
+        super(settings, AddonSettings.getDefaultSettings().withExtender(true).withNeedsSupport(false));
+        registerDefaultState(defaultBlockState().setValue(ONLINE, false));
+    }
+
+    @Override
+    protected void createBlockStateDefinition(net.minecraft.world.level.block.state.StateDefinition.Builder<
+            net.minecraft.world.level.block.Block, BlockState> builder) {
+        super.createBlockStateDefinition(builder);
+        builder.add(ONLINE);
+    }
+
+    @Nullable
+    @Override
+    public <T extends BlockEntity> net.minecraft.world.level.block.entity.BlockEntityTicker<T> getTicker(
+            Level level, BlockState state, net.minecraft.world.level.block.entity.BlockEntityType<T> type) {
+        if (level.isClientSide()) return null;
+        return (tickLevel, pos, tickState, entity) -> {
+            if (entity instanceof MEDockBlockEntity dock) dock.tickServer();
+        };
     }
 
     /** Oritech consults this reflectively; overriding {@link #newBlockEntity} makes it unused. */

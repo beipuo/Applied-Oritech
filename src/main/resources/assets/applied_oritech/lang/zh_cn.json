@@ -6,7 +6,7 @@
   "block.applied_oritech.me_extended_pattern_provider_addon": "ME 扩展样板供应器插件",
   "block.applied_oritech.me_extended_interface_addon": "ME 扩展接口插件",
   "tooltip.applied_oritech.me_extended_pattern_provider_addon": "提供 36 个样板槽，潜行空手右键切换产物自动回收。",
-  "tooltip.applied_oritech.me_extended_interface_addon": "提供 36 个库存配置槽。",
+  "tooltip.applied_oritech.me_extended_interface_addon": "提供 36 个库存配置槽。潜行空手右键切换产物自动回收。",
   "message.applied_oritech.not_attached": "尚未连接机器。插件需紧贴已连接机器的 ME 扩展坞；扩展坞需安装在机器附加装置位置。",
   "message.applied_oritech.no_dock": "这台机器没有 ME 扩展坞。",
   "message.applied_oritech.dock_online": "ME 扩展坞已上线，已连接 %s 个插件模块。",
@@ -16,5 +16,8 @@
   "message.applied_oritech.toggle_off": "关闭",
   "tooltip.applied_oritech.me_dock": "将机器的 ME 插件接入网络，每个扩展坞及其所属插件共用一个频道。",
   "tooltip.applied_oritech.me_pattern_provider_addon": "使用机器执行 ME 自动合成，仅向输入槽投料。潜行空手右键切换产物自动回收。",
-  "tooltip.applied_oritech.me_interface_addon": "将接口中配置的物品补充到机器输入槽，安装合成卡后可请求合成缺少的物品。"
+  "tooltip.applied_oritech.me_interface_addon": "将配置的物品和流体补充到机器，安装合成卡可请求合成；自动回收产物。潜行空手右键切换产物自动回收。",
+  "config.jade.plugin_applied_oritech.grid_node_state": "应用奥瑞科技网络状态",
+  "config.jade.plugin_applied_oritech.pattern_provider": "应用奥瑞科技样板供应器",
+  "config.jade.plugin_applied_oritech.auto_return": "应用奥瑞科技产物自动回收"
 }

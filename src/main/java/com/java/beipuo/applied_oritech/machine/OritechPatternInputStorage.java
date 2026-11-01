@@ -32,7 +32,11 @@ public final class OritechPatternInputStorage implements MEStorage {
         if (upgrade == null || !upgrade.isNetworkOnline() || !upgrade.hasMachineEnergy(cost)) return 0;
         var link = upgrade.getMachineLink();
         if (link == null) return 0;
-        var storage = new OritechMachineStorage(link, description);
+        MEStorage storage = new OritechMachineStorage(link, description);
+        if (link.hasFluids()) {
+            storage = new OritechMachineMEStorage(storage,
+                    new OritechFluidStorage(link.fluidStorage(), description));
+        }
         var accepted = storage.insert(what, amount, Actionable.SIMULATE, source);
         if (mode == Actionable.SIMULATE || accepted <= 0) return accepted;
         if (!upgrade.spendMachineEnergy(cost)) return 0;

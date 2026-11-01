@@ -1,6 +1,7 @@
 {
   "parent": "applied_oritech:block/me_interface_addon",
   "textures": {
+    "particle": "ae2:part/pattern_provider_sides",
     "sides": "ae2:part/pattern_provider_sides",
     "back": "ae2:part/pattern_provider_back",
     "front": "ae2:part/pattern_provider"

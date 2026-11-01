@@ -163,10 +163,10 @@ configurations {
 
 dependencies {
     // ---- The two mods we bridge -------------------------------------------------
-    // Oritech (oritech-neoforge-1.21.1-1.2.12). The NeoForge jar bundles the whole
+    // Oritech (oritech-neoforge-1.21.1-1.2.13). The NeoForge jar bundles the whole
     // `common` module, so all rearth.oritech.* classes are on the compile classpath.
     implementation "curse.maven:oritech-1030830:${oritech_file_id}"
-    // Applied Energistics 2 19.2.17
+    // Applied Energistics 2 19.2.18
     implementation "curse.maven:applied-energistics-2-223794:${ae2_file_id}"
     // Optional integration, also loaded in local development runs.
     compileOnly "curse.maven:ex-pattern-provider-892005:8811572"

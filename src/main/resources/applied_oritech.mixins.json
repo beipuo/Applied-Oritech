@@ -4,6 +4,8 @@
   "package": "com.java.beipuo.applied_oritech.mixin",
   "compatibilityLevel": "JAVA_21",
   "mixins": [
+    "MachineAddonControllerMixin",
+    "ExtendedAERenamerMixin"
   ],
   "client": [
   ],

@@ -43,6 +43,28 @@ public class MEPatternProviderAddonBlock extends MEAddonBlock {
     }
 
     @Override
+    public void setPlacedBy(Level level, BlockPos pos, BlockState state,
+            @Nullable net.minecraft.world.entity.LivingEntity placer, net.minecraft.world.item.ItemStack stack) {
+        super.setPlacedBy(level, pos, state, placer, stack);
+        if (!level.isClientSide() && level.getBlockEntity(pos) instanceof MEPatternProviderAddonBlockEntity provider) {
+            provider.setCustomName(stack.get(net.minecraft.core.component.DataComponents.CUSTOM_NAME));
+        }
+    }
+
+    @Override
+    protected java.util.List<net.minecraft.world.item.ItemStack> getDrops(BlockState state,
+            net.minecraft.world.level.storage.loot.LootParams.Builder builder) {
+        var drops = super.getDrops(state, builder);
+        if (builder.getOptionalParameter(net.minecraft.world.level.storage.loot.parameters.LootContextParams.BLOCK_ENTITY)
+                instanceof MEPatternProviderAddonBlockEntity provider && provider.hasCustomName()) {
+            for (var stack : drops) {
+                if (stack.is(asItem())) stack.set(net.minecraft.core.component.DataComponents.CUSTOM_NAME, provider.getCustomName());
+            }
+        }
+        return drops;
+    }
+
+    @Override
     public void neighborChanged(BlockState state, Level level, BlockPos pos, Block block,
             BlockPos fromPos, boolean isMoving) {
         super.neighborChanged(state, level, pos, block, fromPos, isMoving);

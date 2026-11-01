@@ -42,7 +42,7 @@ import com.java.beipuo.applied_oritech.machine.OritechMachineLink;
  * ({@link #isAutoReturn()}): its default comes from config, and it can be flipped per block.
  */
 public class MEPatternProviderAddonBlockEntity extends MEAddonBlockEntity
-        implements PatternProviderLogicHost {
+        implements PatternProviderLogicHost, net.minecraft.world.Nameable {
 
     private final PatternProviderLogic logic;
     private final IActionSource actionSource = IActionSource.ofMachine(this);
@@ -133,50 +133,91 @@ public class MEPatternProviderAddonBlockEntity extends MEAddonBlockEntity
         if (!autoReturn || !isNetworkOnline()) return;
 
         var link = getMachineLink();
-        if (link == null || !link.hasOutputs()) return;
+        if (link == null) return;
         var returns = logic.getReturnInv();
-        var inventory = link.inventory();
+        com.java.beipuo.applied_oritech.machine.OritechOutputTransfer.sweep(link,
+                (key, amount, mode) -> returns.insert(key, amount, mode, actionSource),
+                () -> hasMachineEnergy(AOConfig.rfPerTransfer()),
+                () -> spendMachineEnergy(AOConfig.rfPerTransfer()));
+    }
 
-        for (var slot : link.outputSlots()) {
-            var stack = inventory.getStackInSlot(slot);
-            if (stack.isEmpty()) continue;
+    @org.jetbrains.annotations.Nullable
+    private net.minecraft.network.chat.Component customName;
 
-            var key = AEItemKey.of(stack);
-            if (key == null) continue;
+    public net.minecraft.network.chat.Component getName() {
+        if (customName != null) return customName;
+        var machine = getMachine();
+        if (machine instanceof net.minecraft.world.Nameable nameable) return nameable.getName();
+        if (machine != null && level != null) {
+            return level.getBlockState(machine.getPosForAddon()).getBlock().getName();
+        }
+        return getBlockState().getBlock().getName();
+    }
 
-            var accepted = returns.insert(key, stack.getCount(), Actionable.SIMULATE, actionSource);
-            if (accepted <= 0) continue;
+    @org.jetbrains.annotations.Nullable
+    public net.minecraft.network.chat.Component getCustomName() {
+        return customName;
+    }
 
-            if (!spendMachineEnergy(AOConfig.rfPerTransfer())) break;
-
-            var original = stack.copy();
-            var taken = inventory.extractFromSlot(key.toStack((int) accepted), slot, false);
-            if (taken <= 0) continue;
-            // The local AE2 buffer persists overflow and notifies crafting-lock tracking on return.
-            var stored = returns.insert(key, taken, Actionable.MODULATE, actionSource);
-            if (stored < taken) {
-                inventory.setStackInSlot(slot, original.copyWithCount(original.getCount() - (int) stored));
-            }
-            inventory.update();
+    public void setCustomName(@org.jetbrains.annotations.Nullable net.minecraft.network.chat.Component name) {
+        customName = name;
+        setChanged();
+        if (level != null && !level.isClientSide()) {
+            level.sendBlockUpdated(worldPosition, getBlockState(), getBlockState(),
+                    net.minecraft.world.level.block.Block.UPDATE_CLIENTS);
         }
     }
 
-    // ---- persistence ----------------------------------------------------------------------
+    @Override
+    public appeng.api.implementations.blockentities.PatternContainerGroup getTerminalGroup() {
+        var machine = getMachine();
+        var icon = customName == null && machine != null && level != null
+                ? AEItemKey.of(level.getBlockState(machine.getPosForAddon()).getBlock()) : getTerminalIcon();
+        return new appeng.api.implementations.blockentities.PatternContainerGroup(icon, getName(), List.of());
+    }
+
+    @Override
+    public CompoundTag getUpdateTag(HolderLookup.Provider registries) {
+        var tag = new CompoundTag();
+        writeCustomName(tag, registries);
+        return tag;
+    }
+
+    @Override
+    public void handleUpdateTag(CompoundTag tag, HolderLookup.Provider registries) {
+        readCustomName(tag, registries);
+    }
+
+    @Override
+    public net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket getUpdatePacket() {
+        return net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket.create(this);
+    }
+
+    private void writeCustomName(CompoundTag tag, HolderLookup.Provider registries) {
+        if (customName != null) {
+            tag.putString("CustomName", net.minecraft.network.chat.Component.Serializer.toJson(customName, registries));
+        }
+    }
+
+    private void readCustomName(CompoundTag tag, HolderLookup.Provider registries) {
+        customName = tag.contains("CustomName")
+                ? net.minecraft.network.chat.Component.Serializer.fromJson(tag.getString("CustomName"), registries) : null;
+    }
 
     @Override
     protected void saveAdditional(CompoundTag nbt, HolderLookup.Provider registries) {
         super.saveAdditional(nbt, registries);
         logic.writeToNBT(nbt, registries);
         nbt.putBoolean("auto_return", autoReturn);
+        writeCustomName(nbt, registries);
     }
 
     @Override
     protected void loadAdditional(CompoundTag nbt, HolderLookup.Provider registries) {
         super.loadAdditional(nbt, registries);
         logic.readFromNBT(nbt, registries);
-        if (nbt.contains("auto_return")) {
-            autoReturn = nbt.getBoolean("auto_return");
-        }
+        if (nbt.contains("auto_return")) autoReturn = nbt.getBoolean("auto_return");
+        readCustomName(nbt, registries);
     }
 
     /** Encoded patterns and anything left in the return inventory must not be destroyed. */

@@ -71,16 +71,16 @@ public class MEDockBlockEntity extends AOGridAddonBlockEntity implements IGridMu
     }
 
     /** Every upgrade addon on the same machine that has picked this dock. */
-    public List<MEUpgradeBlockEntity> findGroupUpgrades() {
+    public List<MEAddonBlockEntity> findGroupUpgrades() {
         var machine = getMachine();
         if (machine == null || level == null) return List.of();
 
         var candidates = new LinkedHashSet<BlockPos>(machine.getConnectedAddons());
         for (var direction : Direction.values()) candidates.add(worldPosition.relative(direction));
-        var result = new ArrayList<MEUpgradeBlockEntity>();
+        var result = new ArrayList<MEAddonBlockEntity>();
         for (var addonPos : candidates) {
             if (!level.hasChunkAt(addonPos)) continue;
-            if (level.getBlockEntity(addonPos) instanceof MEUpgradeBlockEntity upgrade
+            if (level.getBlockEntity(addonPos) instanceof MEAddonBlockEntity upgrade
                     && upgrade.getDock() == this) {
                 result.add(upgrade);
             }
@@ -121,6 +121,17 @@ public class MEDockBlockEntity extends AOGridAddonBlockEntity implements IGridMu
         var currentDistance = current.distSqr(from);
         if (candidateDistance != currentDistance) return candidateDistance < currentDistance;
         return candidate.compareTo(current) < 0;
+    }
+
+    public void tickServer() {
+        if (level == null || level.isClientSide() || isRemoved()) return;
+        var node = getMainNode().getNode();
+        var online = getMachine() != null && node != null && node.isOnline();
+        var state = getBlockState();
+        var property = com.java.beipuo.applied_oritech.block.MEDockBlock.ONLINE;
+        if (state.getValue(property) != online) {
+            level.setBlock(worldPosition, state.setValue(property, online), net.minecraft.world.level.block.Block.UPDATE_CLIENTS);
+        }
     }
 
     /** True when the dock has a channel and the network is powered. */
