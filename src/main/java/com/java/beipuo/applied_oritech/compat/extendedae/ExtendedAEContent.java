@@ -45,6 +45,7 @@ public final class ExtendedAEContent {
 
     public static void register(IEventBus bus) {
         bus.addListener(ExtendedAEContent::commonSetup);
+        net.neoforged.neoforge.common.NeoForge.EVENT_BUS.addListener(ExtendedAERenaming::onRightClickBlock);
     }
 
     private static void commonSetup(FMLCommonSetupEvent event) {

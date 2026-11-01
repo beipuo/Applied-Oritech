@@ -77,14 +77,14 @@ side = "BOTH"
 [[dependencies."${mod_id}"]]
 modId = "oritech"
 type = "required"
-versionRange = "[2.0.0-exp6,)"
+versionRange = "[2.0.0-exp12,)"
 ordering = "AFTER"
 side = "BOTH"
 
 [[dependencies."${mod_id}"]]
 modId = "ae2"
 type = "required"
-versionRange = "[26.1.10-beta,)"
+versionRange = "[26.1.13-beta,)"
 ordering = "AFTER"
 side = "BOTH"
 
@@ -93,7 +93,7 @@ side = "BOTH"
 [[dependencies."${mod_id}"]]
 modId = "extendedae"
 type = "optional"
-versionRange = "[26.1-1.0.4-neoforge,)"
+versionRange = "[1.0.5,)"
 ordering = "AFTER"
 side = "BOTH"
 

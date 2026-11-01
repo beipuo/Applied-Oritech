@@ -90,7 +90,23 @@ public abstract class MEAddonBlock extends AOGridAddonBlock {
     @Override
     public BlockState getStateForPlacement(BlockPlaceContext context) {
         // The model's base is at y=0; its top points away from the clicked surface.
-        return defaultBlockState().setValue(ORIENTATION, context.getClickedFace());
+        var state = defaultBlockState().setValue(ORIENTATION, context.getClickedFace());
+        return state.canSurvive(context.getLevel(), context.getClickedPos()) ? state : null;
+    }
+
+    @Override
+    public boolean canSurvive(BlockState state, net.minecraft.world.level.LevelReader level, BlockPos pos) {
+        return canAttach(level, pos, state.getValue(ORIENTATION).getOpposite());
+    }
+
+    @Override
+    protected BlockState updateShape(BlockState state, net.minecraft.world.level.LevelReader level,
+            net.minecraft.world.level.ScheduledTickAccess ticks, BlockPos pos, Direction direction,
+            BlockPos neighborPos, BlockState neighborState, net.minecraft.util.RandomSource random) {
+        if (direction == state.getValue(ORIENTATION).getOpposite() && !state.canSurvive(level, pos)) {
+            return net.minecraft.world.level.block.Blocks.AIR.defaultBlockState();
+        }
+        return state;
     }
 
     @Override
