@@ -50,6 +50,10 @@ public final class ExtendedAEContent {
         });
     }
 
+    public static boolean isInterfaceMenu(appeng.menu.AEBaseMenu menu) {
+        return menu instanceof com.glodblock.github.extendedae.container.ContainerExInterface;
+    }
+
     public static void addCreativeItems(CreativeModeTab.Output output) {
         output.accept(PATTERN_PROVIDER.get());
         output.accept(INTERFACE.get());

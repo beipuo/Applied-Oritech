@@ -24,9 +24,11 @@ public abstract class AutoReturnScreenMixin extends AbstractContainerScreen<AEBa
 
     @Inject(method = "init", at = @At("TAIL"))
     private void appliedOritech$addAutoReturnButton(CallbackInfo ci) {
-        if (!(menu instanceof InterfaceMenu || menu instanceof PatternProviderMenu)) return;
         var autoReturn = (AutoReturnMenu) menu;
         if (!autoReturn.appliedOritech$hasAutoReturn()) return;
+        if (!(menu instanceof InterfaceMenu || menu instanceof PatternProviderMenu
+                || net.neoforged.fml.ModList.get().isLoaded("extendedae")
+                && com.java.beipuo.applied_oritech.compat.extendedae.ExtendedAEContent.isInterfaceMenu(menu))) return;
         var screen = (AEBaseScreen<?>) (Object) this;
         var priority = screen.getStyle().getWidget("openPriority");
         var position = priority.resolve(new net.minecraft.client.renderer.Rect2i(
