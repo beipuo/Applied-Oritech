@@ -39,14 +39,6 @@ public class MEInterfaceAddonBlock extends MEAddonBlock {
     protected InteractionResult onUpgradeUsed(MEAddonBlockEntity upgrade, Player player) {
         if (!(upgrade instanceof MEInterfaceAddonBlockEntity iface)) return InteractionResult.PASS;
 
-        if (player.isShiftKeyDown()) {
-            var enabled = iface.toggleAutoReturn();
-            var label = net.minecraft.network.chat.Component.translatable(
-                    enabled ? "message.applied_oritech.toggle_on" : "message.applied_oritech.toggle_off");
-            player.displayClientMessage(net.minecraft.network.chat.Component.translatable(
-                    "message.applied_oritech.auto_return", label), true);
-            return InteractionResult.CONSUME;
-        }
         iface.openMenu(player, MenuLocators.forBlockEntity(iface));
         return InteractionResult.CONSUME;
     }
