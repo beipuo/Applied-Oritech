@@ -5,6 +5,7 @@
   "compatibilityLevel": "JAVA_21",
   "mixins": [
     "MachineAddonControllerMixin",
+    "ShrinkerBlockEntityMixin",
     "ExtendedAERenamerMixin",
     "AutoReturnMenuMixin"
   ],

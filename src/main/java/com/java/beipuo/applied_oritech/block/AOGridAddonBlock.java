@@ -18,6 +18,7 @@ import net.minecraft.world.level.block.state.BlockState;
 import rearth.oritech.block.blocks.addons.MachineAddonBlock;
 
 import com.java.beipuo.applied_oritech.blockentity.AOGridAddonBlockEntity;
+import com.java.beipuo.applied_oritech.machine.AddonConsumption;
 
 public abstract class AOGridAddonBlock extends MachineAddonBlock {
     protected AOGridAddonBlock(Properties settings) {
@@ -46,7 +47,10 @@ public abstract class AOGridAddonBlock extends MachineAddonBlock {
                 && state.getValue(MachineAddonBlock.ADDON_USED)
                 && level.getBlockEntity(pos) instanceof AOGridAddonBlockEntity addon) {
             var machine = addon.getMachine();
-            if (machine != null) machine.initAddons(pos);
+            if (machine != null && !(machine instanceof AddonConsumption consumption
+                    && consumption.appliedOritech$isConsumingAddons())) {
+                machine.initAddons(pos);
+            }
         }
         super.onRemove(state, level, pos, newState, movedByPiston);
     }
