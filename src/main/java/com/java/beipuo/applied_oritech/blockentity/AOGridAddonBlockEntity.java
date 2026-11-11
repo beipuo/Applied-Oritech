@@ -21,6 +21,7 @@ import rearth.oritech.block.blocks.addons.MachineAddonBlock;
 import rearth.oritech.block.entity.addons.AddonBlockEntity;
 import rearth.oritech.util.MachineAddonController;
 
+import com.java.beipuo.applied_oritech.machine.AddonConsumption;
 import com.java.beipuo.applied_oritech.machine.OritechMachineLink;
 
 /**
@@ -176,7 +177,10 @@ public abstract class AOGridAddonBlockEntity extends AddonBlockEntity implements
     public void preRemoveSideEffects(BlockPos pos, BlockState state) {
         if (level != null && !level.isClientSide()) {
             var machine = getMachine();
-            if (machine != null) machine.initAddons(pos);
+            if (machine != null && !(machine instanceof AddonConsumption consumption
+                    && consumption.appliedOritech$isConsumingAddons())) {
+                machine.initAddons(pos);
+            }
         }
         super.preRemoveSideEffects(pos, state);
     }
