@@ -77,7 +77,7 @@ side = "BOTH"
 [[dependencies."${mod_id}"]]
 modId = "oritech"
 type = "required"
-versionRange = "[2.0.0-exp12,)"
+versionRange = "[2.0.0-exp13,)"
 ordering = "AFTER"
 side = "BOTH"
 

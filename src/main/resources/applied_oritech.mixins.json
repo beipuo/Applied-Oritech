@@ -6,6 +6,7 @@
   "mixins": [
     "MachineAddonControllerMixin",
     "AddonSplicerBlockEntityMixin",
+    "MachineAddonSplicerOperationMixin",
     "ExtendedAERenamerMixin",
     "AutoReturnMenuMixin"
   ],
